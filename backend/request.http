@@ -1,0 +1,104 @@
+
+###auth
+GET http://localhost:8000/api/v1/auth/auth
+Content-Type: application/json
+
+
+
+### register
+POST http://localhost:8000/api/v1/auth/register
+Content-Type: application/json
+
+{
+    "name":"tuntun",
+    "email":"tuntun@gmail.com",
+    "password":"tuntun",
+    "role":"patient",
+    "photo":"https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg",
+    "gender":"male"
+}
+
+### login
+POST http://localhost:8000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email":"tuntun@gmail.com",
+    "password":"tuntun"
+}
+
+### get all users
+GET http://localhost:8000/api/v1/user
+Content-Type: application/json
+
+
+###get single user
+GET http://localhost:8000/api/v1/user/685614c3eb64125df048c31c
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
+
+
+###delete single user
+DELETE http://localhost:8000/api/v1/user/685614c3eb64125df048c31c
+Content-Type: application/json
+
+###edit single user
+PUT http://localhost:8000/api/v1/user/685614c3eb64125df048c31c
+Content-Type: application/json
+
+{
+    "name": "tun tun"
+}
+
+### get all doctors
+GET http://localhost:8000/api/v1/doctors
+Content-Type: application/json
+
+
+###get single doctor
+GET http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
+Content-Type: application/json
+
+###delete single user
+DELETE http://localhost:8000/api/v1/doctors/685614c3eb64125df048c31c
+Content-Type: application/json
+
+###edit single user
+PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
+Content-Type: application/json
+
+{
+    "name": "tun tun"
+}
+
+### write review for doctor
+POST http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5/reviews
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDkzNDg2LCJleHAiOjE3NTE3ODk0ODZ9.nGPiHeAGGadfl6bUenaMiwW1ZLtJYVeFCli2_ujfWrg
+
+{
+    "reviewText":"good experience",
+    "rating":5
+}
+
+
+### user profile
+GET http://localhost:8000/api/v1/user/profile/me
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
+
+### doctor appointment
+GET http://localhost:8000/api/v1/user/appointments/my-appointment
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
+
+### doctor profile
+GET http://localhost:8000/api/v1/doctors/profile/me
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
+
+
+### appointment booking
+POST http://localhost:8000/api/v1/bookings/checkout-session/685601d9a7206c468dd3d3f5
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwOTQxNzcyLCJleHAiOjE3NTIyMzc3NzJ9.CoK4QQnDCw-FUz7lBl6nXOpGn1KFkJ9eMRS-yzBFQOg
