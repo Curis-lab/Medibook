@@ -3,16 +3,44 @@ import Doctor from "../models/DoctorSchema.js";
 
 export const updateDoctor = async (req, res) => {
   const id = req.params.id;
+
+  //I want to make sure data comming in on this request all must be complete and add to database data recheck doctor schema and ask should valid or not , if valid I should give it to approved or not I should response what info or requirement to be validataion.
   try {
+    // Check if all required fields are provided in request body
+    const requiredFields = [
+      "name",
+      "email",
+      "phone",
+      "bio",
+      "specialization",
+      "ticketPrice",
+      "qualifications",
+      "experiences",
+      "timeSlots",
+    ];
+    const missingFields = requiredFields.filter((field) => !req.body[field]);
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Please provide all required fields: ${missingFields.join(
+          ", "
+        )}`,
+      });
+    }
+
     const updatedUser = await Doctor.findByIdAndUpdate(
       id,
-      { $set: req.body },
+      { $set: {...req.body, isApproved: 'approved'} },
       { new: true }
     ).select("-password");
+
     if (updatedUser == null) {
       res.status(500).json({ success: false, message: "Failed to update" });
       return;
     }
+    
+    await updatedUser.save();
     res.status(200).json({
       success: true,
       message: "Successfully updated.",
@@ -92,7 +120,7 @@ export const getDoctorProfile = async (req, res) => {
       return;
     }
     const { password, ...rest } = doctor._doc;
-    const appointments = await Booking.find({doctor: doctorId});
+    const appointments = await Booking.find({ doctor: doctorId });
 
     res.status(200).json({
       success: true,

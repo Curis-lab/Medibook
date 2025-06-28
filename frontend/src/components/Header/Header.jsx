@@ -39,7 +39,7 @@ function Header() {
       <div className="container">
         <div className="flex items-center justify-between">
           {/**============ logo ============= */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <img
               src={logo}
               alt="logo"

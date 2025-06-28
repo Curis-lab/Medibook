@@ -1,123 +1,307 @@
-import React from "react";
+import React, { useState } from "react";
+import { BASE_URL, user } from '../../../config';
+
+const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
+  <div className="mb-5">
+    <p className="text-[16px] font-semibold text-textColor mb-2">{label}</p>
+    <input
+      type={type}
+      className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  </div>
+);
 
 function Profile() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    ticketPrice: "",
+    specialization: "",
+    // qualifications: []
+    qualifications: {
+      university: "",
+      degree: "",
+      startDate: "",
+      endDate: "",
+    },
+    experiences: {
+      hospitalName: "",
+      position: "",
+      startDate: "",
+      endDate: "",
+    },
+    bio: "",
+    about: "",
+    timeSlots: [],
+  });
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    if (e.target.name.startsWith("qualifications.")) {
+      const field = e.target.name.split(".")[1];
+      setFormData({
+        ...formData,
+        qualifications: {
+          ...formData.qualifications,
+          [field]: e.target.value,
+        },
+      });
+    } else if (e.target.name.startsWith("experiences.")) {
+      const field = e.target.name.split(".")[1];
+      setFormData({
+        ...formData,
+        experiences: {
+          ...formData.experiences,
+          [field]: e.target.value,
+        },
+      });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+  };
+  const requestInfos = [
+    {
+      onChange: handleChange,
+      value: formData.name,
+      type: "text",
+      placeholder: "Full Name",
+      name: "name",
+      label: "Name",
+    },
+    {
+      onChange: handleChange,
+      value: formData.email,
+      type: "email",
+      placeholder: "Email",
+      name: "email",
+      label: "Email",
+    },
+    {
+      onChange: handleChange,
+      value: formData.phone,
+      type: "text",
+      placeholder: "Phone Number",
+      name: "phone",
+      label: "Phone *",
+    },
+    {
+      onChange: handleChange,
+      value: formData.bio,
+      type: "text",
+      placeholder: "Bio",
+      name: "bio",
+      label: "Bio*",
+    },
+  ];
+  console.log('user',user);
+  const handleSubmit = async() => {
+    await fetch(`${BASE_URL}/doctor/`)
+    alert(JSON.stringify(formData));
+  };
   return (
     <div className="px-5 py-8">
       <h2 className="text-black font-bold text-[24px] leading-9 mb-10">
         Profile Information
       </h2>
-      <form className="max-w-[600px]">
+      <form onSubmit={handleSubmit} className="max-w-[600px]">
+        {requestInfos.map((info, idx) => (
+          <LabelAndInput {...info} key={idx} />
+        ))}
+        <div className="flex gap-5">
+          {/* dropdown for specialization, gender, tickket price* */}
+          <div className="mb-5 w-1/2">
+            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+              Gender *
+            </p>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+            >
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div className="mb-5 w-1/2">
+            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+              Specialization *
+            </p>
+            <select
+              name="specialization"
+              value={formData.specialization}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+            >
+              <option value="">Select</option>
+              <option value="surgeon">Surgeon</option>
+              <option value="neurologist">Neurologist</option>
+              <option value="dermatologist">Dermatologist</option>
+              <option value="pediatrician">Pediatrician</option>
+              <option value="cardiologist">Cardiologist</option>
+            </select>
+          </div>
+
+          <div className="mb-5 w-1/2">
+            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+              Ticket Price *
+            </p>
+            <input
+              type="number"
+              name="ticketPrice"
+              value={formData.ticketPrice}
+              onChange={handleChange}
+              placeholder="100"
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+            />
+          </div>
+        </div>
+
         <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Name</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="name"
-            placeholder="Full Name"
-            value={name}
-            onChange={() => {}}
-          />
+          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+            Qualifications *
+          </p>
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <input
+                type="text"
+                name="qualifications.university"
+                placeholder="University/College"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+                value={formData.qualifications.university}
+                onChange={handleChange}
+              />
+              <input
+                type="date"
+                name="qualifications.startDate"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+                value={formData.qualifications.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                name="qualifications.degree"
+                placeholder="Degree"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+                value={formData.qualifications.degree}
+                onChange={handleChange}
+              />
+              <input
+                type="date"
+                name="qualifications.endDate"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+                value={formData.qualifications.endDate}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
         </div>
         <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Email</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="email"
-            placeholder="Email"
-            value={name}
-            onChange={() => {}}
-          />
+          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+            Experiences *
+          </p>
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <input
+                type="text"
+                name="experiences.hospitalName"
+                placeholder="Hospital/Clinic Name"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+                value={formData.experiences.hospitalName}
+                onChange={handleChange}
+              />
+              <input
+                type="date"
+                name="experiences.startDate"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+                value={formData.experiences.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                name="experiences.position"
+                placeholder="Position"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+                value={formData.experiences.position}
+                onChange={handleChange}
+              />
+              <input
+                type="date"
+                name="experiences.endDate"
+                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+                value={formData.experiences.endDate}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
         </div>
         <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Phone *</p>
-          <input
-            type="number"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="phone"
-            placeholder="Phone number"
-            value={name}
-            onChange={() => {}}
-          />
+          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+            Time Slots *
+          </p>
+          <div className="flex items-center gap-5">
+            <select
+              name="day"
+              value={formData.day}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+            >
+              <option value="">Select Day</option>
+              <option value="monday">Monday</option>
+              <option value="tuesday">Tuesday</option>
+              <option value="wednesday">Wednesday</option>
+              <option value="thursday">Thursday</option>
+              <option value="friday">Friday</option>
+              <option value="saturday">Saturday</option>
+              <option value="sunday">Sunday</option>
+            </select>
+
+            <input
+              type="time"
+              name="startTime"
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+              value={formData.startTime}
+              onChange={handleChange}
+            />
+
+            <input
+              type="time"
+              name="endTime"
+              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+              value={formData.endTime}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Bio *</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="bio"
-            placeholder="Write your bio"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Specialization *</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="specialization"
-            placeholder="Your specialization"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Qualification *</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="qualification"
-            placeholder="Your qualifications"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Experience *</p>
-          <input
-            type="number"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="experience"
-            placeholder="Years of experience"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Fees Per Consultation *</p>
-          <input
-            type="number"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="fee"
-            placeholder="Consultation fee"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Available Times *</p>
-          <input
-            type="text"
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            name="timeSlots"
-            placeholder="e.g. 9:00 AM - 5:00 PM"
-            value={name}
-            onChange={() => {}}
-          />
-        </div>
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">Hospital/Clinic Address *</p>
+          <p className="text-[16px] font-semibold text-textColor mb-2">About</p>
           <textarea
-            className="form__input w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer h-[100px] resize-none"
-            name="address"
-            placeholder="Write your hospital/clinic address"
-            value={name}
-            onChange={() => {}}
-          />
+            name="about"
+            rows="5"
+            value={formData.about}
+            onChange={handleChange}
+            placeholder="Write about yourself"
+            className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+          ></textarea>
         </div>
+
         <div className="mt-7">
-          <button type="submit" className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3 hover:bg-blue-600 transition-all duration-200">
+          <button
+            type="submit"
+            className="w-full bg-primary text-white text-[18px] leading-[30px] rounded-lg px-4 py-3 hover:bg-blue-600 transition-all duration-200"
+          >
             Update Profile
           </button>
         </div>

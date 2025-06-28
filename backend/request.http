@@ -59,6 +59,43 @@ Content-Type: application/json
 GET http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
 Content-Type: application/json
 
+### update doctor to get approved
+PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
+
+{
+    "name":"tun tun",
+    "email":"tun@gmail.com",
+    "phone":"02993988",
+    "bio":"I am a good doctor",
+    "specialization":"cardiologist",
+    "ticketPrice":100,
+    "qualifications":[
+        {
+            "degree":"MBBS",
+            "university":"Yangon University",
+            "startDate":"2020-01-01",
+            "endDate":"2024-01-01"
+        }
+    ],
+    "experiences":[
+        {
+            "position": "Senior Cardiologist",
+            "hospitalName": "Yangon General Hospital",
+            "startDate": "2020-01-01",
+            "endDate": "2024-01-01"
+        }
+    ],
+    "timeSlots":[
+        {
+            "day": "Monday",
+            "startingTime": "10:00",
+            "endingTime": "16:00"
+        }
+    ]
+}
+
 ###delete single user
 DELETE http://localhost:8000/api/v1/doctors/685614c3eb64125df048c31c
 Content-Type: application/json
