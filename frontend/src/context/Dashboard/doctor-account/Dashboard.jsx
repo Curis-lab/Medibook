@@ -7,11 +7,12 @@ import Tabs from "./Tabs";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import DoctorAbout from "../../../pages/Doctors/DoctorAbout";
 import Profile from "./Profile";
+
 function Dashboard() {
   const { data, loading, error } = useFetchData(
     `${BASE_URL}/doctors/profile/me`
   );
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState("settings");
 
   return (
     <section>
@@ -46,30 +47,42 @@ function Dashboard() {
                 </div>
               )}
               <div className="mt-8">
-                {tab === 'overview' && <div>
-                  <div className="flex items-center gap-4 mb-10">
-                    <figure className="max-w-[200px] max-h-[200px]">
-                      <img src={data?.photo} alt="doctor photo" className="w-full h-full object-cover" />
-                    </figure>
-                    <div>
-                      <span className="bg-[#ccf0f3] text-black py-1 px-4 lg:py-2 lg:px-6 rounded-lg text-[12px] leading-4 lg:text-[16px] lg:leading-6 font-semibold">surgeon</span>
-                      <h3 className="text-[22px] leading-9 font-bold text-primary mt-3">{data?.name}</h3>
-                      <div className="flex items-center gap-[6px]">
-                        <span className="flex items-center gap-[6px] text-primary text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
-                          <MdOutlineStarPurple500/>
-                          4.5
+                {tab === "overview" && (
+                  <div>
+                    <div className="flex items-center gap-4 mb-10">
+                      <figure className="max-w-[200px] max-h-[200px]">
+                        <img
+                          src={data?.photo}
+                          alt="doctor photo"
+                          className="w-full h-full object-cover"
+                        />
+                      </figure>
+                      <div>
+                        <span className="bg-[#ccf0f3] text-black py-1 px-4 lg:py-2 lg:px-6 rounded-lg text-[12px] leading-4 lg:text-[16px] lg:leading-6 font-semibold">
+                          surgeon
                         </span>
-                        <span className=" text-black text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
-                        (233)
-                        </span>
+                        <h3 className="text-[22px] leading-9 font-bold text-primary mt-3">
+                          {data?.name}
+                        </h3>
+                        <div className="flex items-center gap-[6px]">
+                          <span className="flex items-center gap-[6px] text-primary text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
+                            <MdOutlineStarPurple500 />
+                            4.5
+                          </span>
+                          <span className=" text-black text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
+                            (233)
+                          </span>
+                        </div>
+                        <p className="text__para font-[15px] lg:max-w-[390px] leading-6">
+                          doctor bio
+                        </p>
                       </div>
-                      <p className="text__para font-[15px] lg:max-w-[390px] leading-6">doctor bio</p>
                     </div>
+                    <DoctorAbout {...data} />
                   </div>
-                  <DoctorAbout {...data}/>
-                  </div>}
-                {tab === 'appointments' && <div>Appointments</div>}
-                {tab === 'settings' && <Profile/>}
+                )}
+                {tab === "appointments" && <div>Appointments</div>}
+                {tab === "settings" && <Profile />}
               </div>
             </div>
           </div>

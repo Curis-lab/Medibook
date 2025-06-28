@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { BASE_URL, user } from '../../../config';
+import { BASE_URL, token, user } from "../../../config";
+import { toast } from "react-toastify";
 
 const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
   <div className="mb-5">
@@ -98,17 +99,37 @@ function Profile() {
       label: "Bio*",
     },
   ];
-  console.log('user',user);
-  const handleSubmit = async() => {
-    await fetch(`${BASE_URL}/doctor/`)
-    alert(JSON.stringify(formData));
+  const onSubmitForDoctorApproved = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await fetch(`${BASE_URL}/doctors/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authentication: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await result.json();
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message || "Something went wrong");
+      }
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      toast.error("Failed to update profile. Please try again.");
+    }
   };
+
   return (
     <div className="px-5 py-8">
       <h2 className="text-black font-bold text-[24px] leading-9 mb-10">
         Profile Information
       </h2>
-      <form onSubmit={handleSubmit} className="max-w-[600px]">
+      <form onSubmit={onSubmitForDoctorApproved} className="max-w-[600px]">
         {requestInfos.map((info, idx) => (
           <LabelAndInput {...info} key={idx} />
         ))}

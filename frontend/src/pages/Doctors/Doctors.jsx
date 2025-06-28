@@ -1,8 +1,26 @@
-import React from "react";
-import { doctors } from "../../assets/data/doctors";
+import React,{useEffect, useState} from "react";
 import DoctorCard from "../../components/Doctors/DoctorCard";
-
+import {BASE_URL} from '../../config';
 function Doctors() {
+  const [doctors, setDoctors ] = useState([]);
+  useEffect(()=>{
+    const fetchDoctors = async()=>{
+      try{
+        const res = await fetch(`${BASE_URL}/doctors`);
+        if(!res.ok){
+          throw new Error('Failed to fetch doctors');
+        }
+        const {data} = await res.json();
+        setDoctors(data)
+        console.log(data);
+      }
+      catch(error){
+        console.log(error);
+      }
+    };
+    fetchDoctors();
+  },[]);
+
   return (
     <>
       <section className="bg-[#fff9ea]">
@@ -24,7 +42,7 @@ function Doctors() {
         <div className="container">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
             {doctors.map((doctor) => (
-              <DoctorCard {...doctor} key={doctor.id} />
+              <DoctorCard {...doctor} key={doctor._id} />
             ))}
           </div>
         </div>

@@ -3,7 +3,7 @@ import { formateDate } from "../../utils/formatDAte";
 import { AiFillStar } from "react-icons/ai";
 import FeedbackForm from "./FeedbackForm";
 
-function Feedback() {
+function Feedback({reviews}) {
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
   return (
@@ -11,7 +11,9 @@ function Feedback() {
       <h4 className="text-[20px] leading-[30px] font-bold text-primary mb-[30px]">
         All reviews (424)
       </h4>
-      <div className="flex justify-between gap-10 mb-[30px]">
+      {
+        reviews.map((review, idx)=>(
+          <div key={idx} className="flex justify-between gap-10 mb-[30px]">
         <div className="flex gap-3">
           <figure className="w-10 h-10 rounded-full">
             <img
@@ -22,13 +24,13 @@ function Feedback() {
           </figure>
           <div>
             <h5 className="text-[16px] leading-6 text-primary font-bold">
-              Ali ahmene
+              {review.user?.name || 'no name'}
             </h5>
             <p className="text-[14px] leading-6 text-primary">
-              {formateDate("12-04-2012")}
+              {formateDate(review.createdAt)}
             </p>
             <p className="text__para mt-3 font-medium text-[15px]">
-              Good services, highly recommended .
+              {review.reviewText}
             </p>
           </div>
         </div>
@@ -38,6 +40,8 @@ function Feedback() {
           ))}
         </div>
       </div>
+        ))
+      }
       {!showFeedbackForm && (
         <div className="text-center">
           <button onClick={() => setShowFeedbackForm(true)} className="btn">
