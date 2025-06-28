@@ -1,10 +1,10 @@
 
-###auth
+###auth (used)
 GET http://localhost:8000/api/v1/auth/auth
 Content-Type: application/json
 
 
-### register
+### register (used)
 POST http://localhost:8000/api/v1/auth/register
 Content-Type: application/json
 
@@ -17,7 +17,7 @@ Content-Type: application/json
     "gender":"male"
 }
 
-### login
+### login (used)
 POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
@@ -31,7 +31,7 @@ GET http://localhost:8000/api/v1/user
 Content-Type: application/json
 
 
-###get single user
+###get single user (used)
 GET http://localhost:8000/api/v1/user/685614c3eb64125df048c31c
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
@@ -49,16 +49,16 @@ Content-Type: application/json
     "name": "tun tun"
 }
 
-### get all doctors
+### get all doctors (used)
 GET http://localhost:8000/api/v1/doctors
 Content-Type: application/json
 
 
-###get single doctor
+###get single doctor (used)
 GET http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
 Content-Type: application/json
 
-### update doctor to get approved
+### update doctor to get approved (used)
 PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
@@ -118,7 +118,7 @@ Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMz
 }
 
 
-### user profile
+### user profile (used)
 GET http://localhost:8000/api/v1/user/profile/me
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
@@ -128,7 +128,7 @@ GET http://localhost:8000/api/v1/user/appointments/my-appointment
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
 
-### doctor profile
+### doctor profile (used)
 GET http://localhost:8000/api/v1/doctors/profile/me
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc

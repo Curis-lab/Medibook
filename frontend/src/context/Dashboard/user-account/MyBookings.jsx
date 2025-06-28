@@ -11,7 +11,6 @@ function MyBookings() {
     loading,
     error,
   } = useFetchData(`${BASE_URL}/user/appointments/my-appointment`);
-  console.log(appointments);
   return (
     <div>
       {loading && <Loading />}

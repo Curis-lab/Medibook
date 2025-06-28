@@ -15,21 +15,20 @@ function MyAccount() {
     loading,
     error,
   } = useFetchData(`${BASE_URL}/user/profile/me`);
-  console.log(userData);
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
   return (
     <div className="max-w-[1170px] px-5 max-auto">
       {loading && <Loading />}
-      {error && <Error errMessage={error}/>}
+      {error && <Error errMessage={error} />}
       {!loading && !error && (
         <div className="grid md:grid-cols-3 gap-10">
           <div className="pb-[50px] px-[30px] rounded-md">
             <div className="flex items-center justify-center">
               <figure className="w-[100px] h-[100px] rounded-full border-2 border-solid border-primary">
                 <img
-                  src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
+                  src={userData.photo}
                   alt=""
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -37,10 +36,10 @@ function MyAccount() {
             </div>
             <div className="text-center mt-4">
               <h3 className="text-[18px] leading-[30px] text-primary font-bold">
-                Muhia
+                {userData.name}
               </h3>
               <p className="text-black text-[15px] leading-6 font-medium">
-                example@gmail.com
+                {userData.email}
               </p>
               <p className="text-black text-[15px] leading-6 font-medium">
                 Blood Type:{" "}

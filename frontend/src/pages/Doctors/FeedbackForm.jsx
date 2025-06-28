@@ -1,16 +1,37 @@
 import React, { useState } from "react";
 import { AiFillStar } from "react-icons/ai";
-
+import { BASE_URL } from "../../config";
+import { useParams } from "react-router-dom";
 function FeedbackForm() {
+  const { id } = useParams();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  const [reviewText, setReviewText] = useState('');
-  const handleSubmitReview = async (e)=>{
+  const [reviewText, setReviewText] = useState("");
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
-    //later we will use our api
-  }
+    try {
+      const res = await fetch(`${BASE_URL}/doctors/${id}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authentication: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          reviewText,
+          rating,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to submit review");
+      }
+      const { data } = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
-    <form action="">
+    <form action="" onSubmit={handleSubmitReview}>
       <div>
         <h3 className="text-black text-[16px] leading-6 font-semibold mb-4">
           How would you rate the overrall expericne?*
@@ -47,8 +68,13 @@ function FeedbackForm() {
         <h3 className="text-black text-[16px] leading-6 font-semibold mb-4 mt-0">
           Shre your feedbck or suggestion*
         </h3>
-        <textarea value={reviewText} onChange={e=>setReviewText(e.target.value)} className="border border-solid border-[#0066ff34] focus:outline outline-primary w-full px-4 py-3 rounded-md" placeholder
-        ="Write your message" rows={5}/>
+        <textarea
+          value={reviewText}
+          onChange={(e) => setReviewText(e.target.value)}
+          className="border border-solid border-[#0066ff34] focus:outline outline-primary w-full px-4 py-3 rounded-md"
+          placeholder="Write your message"
+          rows={5}
+        />
       </div>
       <button className="btn" type="submit" onClick={handleSubmitReview}>
         Submit Feedback
