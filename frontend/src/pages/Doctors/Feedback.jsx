@@ -28,7 +28,7 @@ function Feedback({ reviews }) {
               <p className="text-[14px] leading-6 text-primary">
                 {formateDate(review.createdAt)}
               </p>
-              <p className="text__para mt-3 font-medium text-[15px]">
+              <p className="text__parag mt-3 font-medium text-[15px]">
                 {review.reviewText}
               </p>
             </div>

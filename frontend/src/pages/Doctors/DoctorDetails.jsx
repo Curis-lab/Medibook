@@ -30,19 +30,15 @@ function DoctorDetails() {
     <section>
       {doctorInfo && (
         <div className="max-w-[1270px] px-5 mx-auto md:flex">
-          <div className="grid md:grid-cols-3 gap-[50px]">
+          <div className="flex sm:flex-col">
             <div className="md:col-span-2">
               <div
-                className="flex items-center gap-5
-            "
+                className="md:flex  gap-5 md:min-w-[800px]"
               >
                 <figure>
-                  <img
-                    src={doctorInfo.photo}
-                    alt=""
-                  />
+                  <img src={doctorInfo.photo} alt="" className="w-[300px] h-[300px] object-cover" />
                 </figure>
-                <div>
+                <div className="my-[15px]">
                   <span className="bg-[#ccf0f3] text-black py-1 px-6 lg:py-2 lg:px-6 text-[12px] leading-4 lg:text-[16px] lg:leading-7 font-semibold rounded-full">
                     {doctorInfo.specialization}
                   </span>
@@ -58,7 +54,7 @@ function DoctorDetails() {
                       (232)
                     </span>
                   </div>
-                  <p className="text__para text-[14px] leading-6 md:text-[15px] lg:max-w-[390px]">
+                  <p className="text__parag text-[14px] leading-6 md:text-[15px] lg:max-w-[390px]">
                     {doctorInfo.bio}
                   </p>
                 </div>
@@ -82,7 +78,11 @@ function DoctorDetails() {
                 </button>
               </div>
               <div className="mt-10">
-                {tab === "about" ? <DoctorAbout {...doctorInfo} /> : <Feedback {...doctorInfo}/>}
+                {tab === "about" ? (
+                  <DoctorAbout {...doctorInfo} />
+                ) : (
+                  <Feedback {...doctorInfo} />
+                )}
               </div>
             </div>
           </div>

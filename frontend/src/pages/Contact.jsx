@@ -3,7 +3,7 @@ function Contact() {
     <section>
       <div className="px-4 mx-auto max-w-screen-md">
         <h2 className="text-center">Contact Us</h2>
-        <p className="mb-8 lg:mb-16 font-light text-center text__para">
+        <p className="mb-8 lg:mb-16 font-light text-center text__parag">
           Got a technical issue? Want to send feedback about a beta feature? Let
           us know. Our team is ready to assist you with any questions or
           concerns. We'll get back to you as soon as possible.

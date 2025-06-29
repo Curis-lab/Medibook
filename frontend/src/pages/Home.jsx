@@ -16,7 +16,7 @@ function Home() {
                 <h1 className="text-[36px] leading-[46px] text-black font-[800] md:text-[60px] md:leading-[70px]">
                   We help patients live a helthy, longer life.
                 </h1>
-                <p className="text__para">
+                <p className="text__parag">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                   Soluta voluptates, distinctio dolorum blanditiis ratione
                   numquam deserunt rem, repudiandae, cumque quos eius? Rem

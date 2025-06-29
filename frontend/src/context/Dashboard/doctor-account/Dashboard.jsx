@@ -7,12 +7,13 @@ import Tabs from "./Tabs";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import DoctorAbout from "../../../pages/Doctors/DoctorAbout";
 import Profile from "./Profile";
+import Appointments from "./Appointments";
 
 function Dashboard() {
   const { data, loading, error } = useFetchData(
     `${BASE_URL}/doctors/profile/me`
   );
-  const [tab, setTab] = useState("settings");
+  const [tab, setTab] = useState("overview");
 
   return (
     <section>
@@ -73,7 +74,7 @@ function Dashboard() {
                             (233)
                           </span>
                         </div>
-                        <p className="text__para font-[15px] lg:max-w-[390px] leading-6">
+                        <p className=" font-[15px] lg:max-w-[390px] leading-6">
                           doctor bio
                         </p>
                       </div>
@@ -81,7 +82,7 @@ function Dashboard() {
                     <DoctorAbout {...data} />
                   </div>
                 )}
-                {tab === "appointments" && <div>Appointments</div>}
+                {tab === "appointments" && <Appointments/>}
                 {tab === "settings" && <Profile />}
               </div>
             </div>

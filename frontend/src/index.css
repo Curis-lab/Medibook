@@ -29,7 +29,7 @@
   .heading {
     @apply text-[26px] leading-[36px];
   }
-  .text__para {
+  .text__parag {
     @apply text-[16px] leading-7 mt-3;
   }
 }

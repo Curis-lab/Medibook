@@ -23,7 +23,7 @@ function Doctors() {
 
   return (
     <>
-      <section className="bg-[#fff9ea]">
+      <section className="bg-[#fff9ea] py-[20px]">
         <div className="container text-center">
           <h2 className="heading">Find a doctor</h2>
           <div className="max-w-[570px] mt-[30px] mx-auto bg-[#0066ff2c] rounded-md flex items-center justify-between">

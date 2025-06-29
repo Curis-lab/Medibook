@@ -5,12 +5,14 @@ import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
 import DoctorCard from "../../../components/Doctors/DoctorCard";
 
+
 function MyBookings() {
   const {
     data: appointments,
     loading,
     error,
   } = useFetchData(`${BASE_URL}/user/appointments/my-appointment`);
+  
   return (
     <div>
       {loading && <Loading />}
