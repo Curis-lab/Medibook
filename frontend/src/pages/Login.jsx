@@ -4,24 +4,17 @@ import { BASE_URL } from "../config";
 import { toast } from "react-toastify";
 import { authContext } from "../context/AuthContext";
 import HashLoader from "react-spinners/HashLoader";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 function Login() {
+  const navigate = useNavigate();
+  const { dispatch } = useContext(authContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-  const { dispatch } = useContext(authContext);
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
       const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -33,6 +26,10 @@ function Login() {
       if (!res.ok) {
         throw new Error(result.message);
       }
+      return result;
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["doctor"] });
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: {
@@ -41,22 +38,33 @@ function Login() {
           role: result.role,
         },
       });
-      console.log(result, "login data");
-      setLoading(false);
       toast.success(result.message);
       navigate("/home");
-    } catch (err) {
-      setLoading(false);
-      toast.error(err.message);
-    }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleInputChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
   return (
     <section className="px-5 lg:px-0">
       <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md md:p-10">
         <h3 className="text-black text-[22px] leading-9 font-bold mb-10">
           Hello! <span className="text-primary">Weclome</span> Back 🎉
         </h3>
-        <form action="" onSubmit={submitHandler} className="py-4 md:py-0">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutate(formData);
+          }}
+          className="py-4 md:py-0"
+        >
           <div className="mb-5">
             <input
               className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary rounded-md cursor-pointer"
@@ -84,7 +92,7 @@ function Login() {
               type="submit"
               className="btn w-full bg-primary text-white text-[18px] leading-[30px] rounded-lg px-4 "
             >
-              {loading ? <HashLoader size={25} color="#fff" /> : "Login"}
+              {isPending ? <HashLoader size={25} color="#fff" /> : "Login"}
             </button>
           </div>
           <p className="mt-5 text-black text-center">

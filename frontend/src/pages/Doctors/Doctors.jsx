@@ -1,25 +1,19 @@
-import React,{useEffect, useState} from "react";
+import React from "react";
 import DoctorCard from "../../components/Doctors/DoctorCard";
-import {BASE_URL} from '../../config';
+import { BASE_URL } from "../../config";
+import { useQuery } from "@tanstack/react-query";
+import Error from "../../components/Error/Error";
+import Loading from "../../components/Loader/Loading";
 function Doctors() {
-  const [doctors, setDoctors ] = useState([]);
-  useEffect(()=>{
-    const fetchDoctors = async()=>{
-      try{
-        const res = await fetch(`${BASE_URL}/doctors`);
-        if(!res.ok){
-          throw new Error('Failed to fetch doctors');
-        }
-        const {data} = await res.json();
-        setDoctors(data)
-        console.log(data);
-      }
-      catch(error){
-        console.log(error);
-      }
-    };
-    fetchDoctors();
-  },[]);
+  const {
+    data: doctors,
+    error,
+    isLoading,
+    isSuccess
+  } = useQuery({
+    queryKey: ["doctor"],
+    queryFn: () => fetch(`${BASE_URL}/doctors`).then((res) => res.json()),
+  });
 
   return (
     <>
@@ -40,11 +34,19 @@ function Doctors() {
       </section>
       <section>
         <div className="container">
+          {isLoading && <Loading />}
+          {error && <Error errMessage={error} />}
+          {
+            isSuccess &&(
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
-            {doctors.map((doctor) => (
-              <DoctorCard {...doctor} key={doctor._id} />
-            ))}
+            {
+              doctors.data.map((doctor) => (
+                <DoctorCard {...doctor} key={doctor._id} />
+              ))}
           </div>
+            )
+          }
         </div>
       </section>
     </>

@@ -64,7 +64,7 @@ export const register = async (req, res) => {
       message: "Unexpected internal error. Please try again.",
     });
   }
-};
+};{}
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -77,15 +77,16 @@ export const login = async (req, res) => {
     } else if (doctor) {
       user = doctor;
     }
-
     // check if user exist or not
     if (!user) {
       res.status(404).json({ message: "User not found." });
+      return;
     }
     //compare password
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       res.status(400).json({ status: false, message: "Invalid credentials." });
+      return;
     }
     //get token
     const token = generateToken(user);

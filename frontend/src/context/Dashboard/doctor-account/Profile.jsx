@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BASE_URL, token, user } from "../../../config";
 import { toast } from "react-toastify";
+import { useMutation , useQueryClient} from "@tanstack/react-query";
+import HashLoader from "react-spinners/HashLoader";
 
 const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
   <div className="mb-5">
@@ -40,6 +42,73 @@ function Profile() {
     about: "",
     timeSlots: [],
   });
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
+      const res = await fetch(`${BASE_URL}/doctors/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authentication: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+      return result;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({queryKey: ['doctor']});
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  useEffect(() => {
+    const fetchData = ()=>{
+      fetch(`${BASE_URL}/doctors/profile/me`, {
+        headers: {
+          Authentication: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          const { data } = result;
+          setFormData({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            ticketPrice: data.ticketPrice,
+            specialization: data.specialization,
+            qualifications: {
+              university: data.qualifications?.university || "",
+              degree: data.qualifications?.degree || "",
+              startDate: data.qualifications?.startDate || "",
+              endDate: data.qualifications?.endDate || "",
+            },
+            experiences: {
+              hospitalName: data.experiences?.hospitalName || "",
+              position: data.experiences?.position || "",
+              startDate: data.experiences?.startDate || "",
+              endDate: data.experiences?.endDate || "",
+            },
+            bio: data.bio,
+            about: data.about,
+            timeSlots: data.timeSlots || [],
+          });
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -99,37 +168,20 @@ function Profile() {
       label: "Bio*",
     },
   ];
-  const onSubmitForDoctorApproved = async (e) => {
-    e.preventDefault();
-    try {
-      const result = await fetch(`${BASE_URL}/doctors/${user._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authentication: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
 
-      const data = await result.json();
-
-      if (data.success) {
-        toast.success(data.message);
-      } else {
-        toast.error(data.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error("Failed to update profile:", err);
-      toast.error("Failed to update profile. Please try again.");
-    }
-  };
 
   return (
     <div className="px-5 py-8">
       <h2 className="text-black font-bold text-[24px] leading-9 mb-10">
         Profile Information
       </h2>
-      <form onSubmit={onSubmitForDoctorApproved} className="max-w-[600px]">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          mutate(formData);
+        }}
+        className="max-w-[600px]"
+      >
         {requestInfos.map((info, idx) => (
           <LabelAndInput {...info} key={idx} />
         ))}
@@ -323,7 +375,11 @@ function Profile() {
             type="submit"
             className="w-full bg-primary text-white text-[18px] leading-[30px] rounded-lg px-4 py-3 hover:bg-blue-600 transition-all duration-200"
           >
-            Update Profile
+            {isPending ? (
+              <HashLoader size={25} color="#0066ff61" />
+            ) : (
+              "Save Changes"
+            )}
           </button>
         </div>
       </form>

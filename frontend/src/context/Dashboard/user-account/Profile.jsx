@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import uploadImageKitIO from "../utils/uploadImageKitIO";
 import {
   ImageKitAbortError,
@@ -9,7 +9,7 @@ import {
 } from "@imagekit/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../../config";
+import { BASE_URL, token } from "../../../config";
 function Profile() {
   const navigate = useNavigate();
   const [previewURL, setPreviewURL] = useState(null);
@@ -24,6 +24,7 @@ function Profile() {
   });
 
   const fileInputRef = useRef(null);
+/**this is imagekit uploader */
 
   const abortController = new AbortController();
 
@@ -142,6 +143,20 @@ function Profile() {
 
     return () => URL.revokeObjectURL(previewUrl);
   };
+  useEffect(()=>{
+    const fetchData = ()=>{
+      fetch(`${BASE_URL}/user/profile/me`,{
+        headers:{
+          Authentication: `Bearer ${token}`,
+          'Content-Type':'application/json'
+        }
+      }).then((res)=>res.json()).then((data)=>{
+        console.log(data);
+        
+        setFormData({...data.data})});
+    };
+    fetchData();
+  },[])
   return (
     <div>
       <form action="" onSubmit={submitHandler}>
@@ -223,7 +238,7 @@ function Profile() {
               src={
                 previewURL
                   ? previewURL
-                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuNhTZJTtkR6b-ADMhmzPvVwaLuLdz273wvQ&s"
+                  : formData.photo
               }
               alt=""
               className="w-full h-full object-cover rounded-full"
