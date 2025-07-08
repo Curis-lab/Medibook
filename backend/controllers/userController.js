@@ -4,6 +4,7 @@ import User from "../models/UserSchema.js";
 
 export const updateUser = async (req, res) => {
   const id = req.params.id;
+  console.log('this is uplaod user',req.body);
   try {
     const updatedUser = await User.findByIdAndUpdate(
       id,

@@ -7,6 +7,7 @@ import useFetchData from "../../../hooks/useFetchData";
 import { BASE_URL } from "../../../config";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
+
 function MyAccount() {
   const { dispatch } = useContext(authContext);
   const [tab, setTab] = useState("bookings");

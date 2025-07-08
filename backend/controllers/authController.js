@@ -24,7 +24,7 @@ export const register = async (req, res) => {
   try {
     let user = null;
     if (role == "patient") {
-      await User.findOne({ email });
+      user = await User.findOne({ email });
     } else if (role == "doctor") {
       user = await Doctor.findOne({ email });
     }
@@ -55,6 +55,8 @@ export const register = async (req, res) => {
       });
     }
     await user.save();
+
+    delete user.password;
     res
       .status(200)
       .json({ success: true, message: "user successfully created." });
