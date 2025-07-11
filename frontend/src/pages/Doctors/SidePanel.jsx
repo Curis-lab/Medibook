@@ -1,11 +1,12 @@
 import React from 'react'
 import {BASE_URL, token} from '../../config';
 import {toast} from 'react-toastify';
-
+import {useParams} from 'react-router-dom';
 function SidePanel() {
+  const {id} = useParams();
   const bookingHandler = async()=>{
     try{
-    const res =   await fetch(`${BASE_URL}/bookings/checkout-session/685601d9a7206c468dd3d3f5`,{
+    const res =   await fetch(`${BASE_URL}/bookings/checkout-session/${id}`,{
         method: 'POST',
         headers:{
           Authentication: `Bearer ${token}`,
@@ -18,6 +19,7 @@ function SidePanel() {
       if(data.session.url){
         window.location.href = data.session.url;
       }
+      
     }catch(error){
       toast.error(error.message);
     }

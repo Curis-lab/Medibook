@@ -22,8 +22,8 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email":"tuntun@gmail.com",
-    "password":"tuntun"
+    "email":"smit@gmail.com",
+    "password":"smit"
 }
 
 ### get all users
@@ -50,12 +50,13 @@ Content-Type: application/json
 }
 
 ### get all doctors (used)
-GET https://medibook-g32h.onrender.com/api/v1/doctors
+# GET https://medibook-g32h.onrender.com/api/v1/doctors
+GET http://localhost:8000/api/v1/doctors
 Content-Type: application/json
 
 
 ###get single doctor (used)
-GET http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
+GET http://localhost:8000/api/v1/doctors/6860ec050dda14c957e6ed3f
 Content-Type: application/json
 
 ### update doctor to get approved (used)
@@ -121,12 +122,19 @@ Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMz
 ### user profile (used)
 GET http://localhost:8000/api/v1/user/profile/me
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUyMDc0MDM5LCJleHAiOjE3NTMzNzAwMzl9.Ltz6XOJerlk4fw9-kVSWrcwDlK6EgPYo81i_bD151K8
+
+
+### appointment booking
+POST http://localhost:8000/api/v1/bookings/checkout-session/6860ec050dda14c957e6ed3f
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUyMDc0MDM5LCJleHAiOjE3NTMzNzAwMzl9.Ltz6XOJerlk4fw9-kVSWrcwDlK6EgPYo81i_bD151K8
+
 
 ### doctor appointment
 GET http://localhost:8000/api/v1/user/appointments/my-appointment
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwNDgyNTQxLCJleHAiOjE3NTE3Nzg1NDF9.EmSRqPdlH88wMXcudGjIlSzdihZtYYaz3fHzR_MGuYk
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBlYzA1MGRkYTE0Yzk1N2U2ZWQzZiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTIwNzY3NDAsImV4cCI6MTc1MzM3Mjc0MH0.C3fLl_Gp2FnuCTC6aii5fC9Mg-5PyxHWpdJnUzRNjaM
 
 ### doctor profile (used)
 GET http://localhost:8000/api/v1/doctors/profile/me
@@ -134,7 +142,4 @@ Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
 
 
-### appointment booking
-POST http://localhost:8000/api/v1/bookings/checkout-session/685601d9a7206c468dd3d3f5
-Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUwOTQxNzcyLCJleHAiOjE3NTIyMzc3NzJ9.CoK4QQnDCw-FUz7lBl6nXOpGn1KFkJ9eMRS-yzBFQOg
+### appointment for doctor's profile

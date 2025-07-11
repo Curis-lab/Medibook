@@ -1,9 +1,9 @@
 import React from 'react'
 
-function Appointments() {
+function Appointments({appointments}) {
   return (
     <div>
-      Appointments
+      {JSON.stringify(appointments)}
     </div>
   )
 }

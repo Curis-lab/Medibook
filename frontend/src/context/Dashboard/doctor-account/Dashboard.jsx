@@ -82,7 +82,7 @@ function Dashboard() {
                     <DoctorAbout {...data} />
                   </div>
                 )}
-                {tab === "appointments" && <Appointments/>}
+                {tab === "appointments" && <Appointments appointments={[...data.appointments]}/>}
                 {tab === "settings" && <Profile />}
               </div>
             </div>
