@@ -26,27 +26,30 @@ function Profile() {
     if (!formData) {
       return;
     }
+
     try {
-      const data = new FormData();
       const { name, email, password, gender, role } = formData;
-      data.append("name", name);
-      data.append("email", email);
-      data.append("password", password);
-      data.append("gender", gender);
-      data.append("role", role);
+
+      const data = {
+        name,
+        email,
+        password,
+        gender,
+        role,
+      };
 
       if (selectedImage) {
         const uploadResponse = await handleFileUpload(selectedImage);
-        data.append("photo", uploadResponse.url);
+        data.photo = uploadResponse.url;
       }
 
       const res = await fetch(`${BASE_URL}/user/${user._id}`, {
         method: "PUT",
         headers: {
-          "Content-Type":"multipart/form-data",
           Authentication: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: data,
+        body: JSON.stringify(data),
       });
 
       const result = await res.json();
@@ -86,6 +89,7 @@ function Profile() {
       ...prev,
       [name]: value,
     }));
+    console.log(formData);
   };
 
   useEffect(() => {

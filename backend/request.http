@@ -26,6 +26,8 @@ Content-Type: application/json
     "password":"smit"
 }
 
+
+# --------------------- user session ------------------
 ### get all users
 GET http://localhost:8000/api/v1/user
 Content-Type: application/json
@@ -43,11 +45,16 @@ Content-Type: application/json
 
 ###edit single user
 PUT http://localhost:8000/api/v1/user/685614c3eb64125df048c31c
-Content-Type: application/json
+Content-Type: multipart/form-data
+Authentication: `Bearer `
 
 {
     "name": "tun tun"
 }
+
+#------------------ end user session ------------
+
+#----------------- doctors -------------------
 
 ### get all doctors (used)
 # GET https://medibook-g32h.onrender.com/api/v1/doctors
@@ -58,6 +65,11 @@ Content-Type: application/json
 ###get single doctor (used)
 GET http://localhost:8000/api/v1/doctors/6860ec050dda14c957e6ed3f
 Content-Type: application/json
+
+### delete doctor
+DELETE  http://localhost:8000/api/v1/doctors/6869e5c3bf6e32b573f28bb3
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjllNWMzYmY2ZTMyYjU3M2YyOGJiMyIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTIyNzk1MDUsImV4cCI6MTc1MzU3NTUwNX0.k_-e_1XUbMzhUrxslNA3Qvxfnsccc1biRYjANHer-Po
 
 ### update doctor to get approved (used)
 PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
@@ -99,6 +111,8 @@ Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5
 ###delete single user
 DELETE http://localhost:8000/api/v1/doctors/685614c3eb64125df048c31c
 Content-Type: application/json
+
+# --------------------- end doctors session -------------------
 
 ###edit single user
 PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5

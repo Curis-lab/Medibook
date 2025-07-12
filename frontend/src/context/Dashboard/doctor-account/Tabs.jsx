@@ -1,14 +1,32 @@
-import React ,{useContext}from "react";
+import React, { useContext } from "react";
 import { BiMenu } from "react-icons/bi";
-import {useNavigate} from 'react-router-dom';
-import { authContext} from '../../../context/AuthContext';
+import { useNavigate } from "react-router-dom";
+import { authContext } from "../../../context/AuthContext";
+import { BASE_URL } from "../../../config";
+
 function Tabs({ tab, setTab }) {
-  const {dispatch} = useContext(authContext)
+  const { dispatch, user, token } = useContext(authContext);
   const navigate = useNavigate();
-  const handleLogout = ()=>{
-    dispatch({type:'LOGOUT'});
-    navigate('/');
-  }
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+    navigate("/");
+  };
+  const handleDeleteAccount = async () => {
+    const res = await fetch(`${BASE_URL}/doctors/${user._id}`, {
+      method: "DELETE",
+      headers: {
+        Authentication: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      dispatch({ type: "LOGOUT" });
+      navigate("/");
+    } else {
+      console.log("Error deleting account");
+    }
+  };
   return (
     <div>
       <span>
@@ -16,7 +34,7 @@ function Tabs({ tab, setTab }) {
       </span>
       <div className="hidden lg:flex flex-col p-[30px] bg-white shadow-md items-center h-max rounded-md">
         <button
-        onClick={()=>setTab('overview')}
+          onClick={() => setTab("overview")}
           className={`${
             tab === "overview"
               ? "bg-indigo-100 text-primary"
@@ -26,7 +44,7 @@ function Tabs({ tab, setTab }) {
           Overview
         </button>
         <button
-        onClick={()=>setTab('appointments')}
+          onClick={() => setTab("appointments")}
           className={`${
             tab === "appointments"
               ? "bg-indigo-100 text-primary"
@@ -36,8 +54,8 @@ function Tabs({ tab, setTab }) {
           Appointments
         </button>
         <button
-         onClick={()=>setTab('settings')}
-         className={`${
+          onClick={() => setTab("settings")}
+          className={`${
             tab === "settings"
               ? "bg-indigo-100 text-primary"
               : "bg-transparent text-black"
@@ -47,16 +65,19 @@ function Tabs({ tab, setTab }) {
         </button>
       </div>
       <div className="mt-[100px] w-full">
-              <button
-                onClick={handleLogout}
-                className="w-full bg-[#181a1e] p-3 text-[16px] leading-7 rounded-md text-white"
-              >
-                Logout
-              </button>
-              <button className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white">
-                Delete Account
-              </button>
-            </div>
+        <button
+          onClick={handleLogout}
+          className="w-full bg-[#181a1e] p-3 text-[16px] leading-7 rounded-md text-white"
+        >
+          Logout
+        </button>
+        <button
+          onClick={handleDeleteAccount}
+          className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
+        >
+          Delete Account
+        </button>
+      </div>
     </div>
   );
 }

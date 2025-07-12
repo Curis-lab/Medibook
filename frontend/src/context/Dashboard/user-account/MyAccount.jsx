@@ -9,7 +9,7 @@ import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
 
 function MyAccount() {
-  const { dispatch } = useContext(authContext);
+  const { dispatch, token } = useContext(authContext);
   const [tab, setTab] = useState("bookings");
   const {
     data: userData,
@@ -18,6 +18,22 @@ function MyAccount() {
   } = useFetchData(`${BASE_URL}/user/profile/me`);
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
+  };
+  const handleDeleteAccount = () => {
+    fetch(`${BASE_URL}/user/${userData._id}`, {
+      method: "DELETE",
+      headers: {
+        Authentication: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          dispatch({ type: "LOGOUT" });
+        }
+      })
+      .catch((err) => {
+        console.error("Error deleting account:", err);
+      });
   };
   return (
     <div className="max-w-[1170px] px-5 max-auto">
@@ -56,7 +72,10 @@ function MyAccount() {
               >
                 Logout
               </button>
-              <button className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white">
+              <button
+                onClick={handleDeleteAccount}
+                className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
+              >
                 Delete Account
               </button>
             </div>

@@ -1,32 +1,43 @@
-import User from "../models/UserSchema.js";
-import Doctor from "../models/DoctorSchema.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import ImageKit from 'imagekit';
+import ImageKit from "imagekit";
+import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
+import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
+import { MixPatientRepository } from "../src/adapters/common/repositories/patient.rep.js";
 
 const imagekit = new ImageKit({
-  urlEndpoint:'https://ik.imagekit.io/1n5btdxrfb',
-  publicKey:'public_yRZslw98mgzoetGRkyyG2boI+nA=',
-  privateKey:'private_Er4fXNVPf8MD5TpS2yajRABP3GI='
-})
+  urlEndpoint: "https://ik.imagekit.io/1n5btdxrfb",
+  publicKey: "public_yRZslw98mgzoetGRkyyG2boI+nA=",
+  privateKey: "private_Er4fXNVPf8MD5TpS2yajRABP3GI=",
+});
+
+const generateAuthGateway = MixUnitOfWorkService(
+  MixDoctorRepository(MixPatientRepository(class {}))
+);
+const authGateway = new generateAuthGateway();
+
 const generateToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: "15d",
   });
 
-
-export const auth = async(req, res)=>{
-  const {token, expire, signature} = imagekit.getAuthenticationParameters();
-  res.send({token, expire, signature, publicKey: 'public_yRZslw98mgzoetGRkyyG2boI+nA='})
-}
+export const auth = async (req, res) => {
+  const { token, expire, signature } = imagekit.getAuthenticationParameters();
+  res.send({
+    token,
+    expire,
+    signature,
+    publicKey: "public_yRZslw98mgzoetGRkyyG2boI+nA=",
+  });
+};
 export const register = async (req, res) => {
   const { email, password, name, role, photo, gender } = req.body;
   try {
     let user = null;
     if (role == "patient") {
-      user = await User.findOne({ email });
+      user = await authGateway.findPatientByEmail(email);
     } else if (role == "doctor") {
-      user = await Doctor.findOne({ email });
+      user = await authGateway.getDoctorByEmail(email);
     }
 
     if (user) {
@@ -35,25 +46,20 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
+    const userInfo = {
+      name,
+      email,
+      password: hashPassword,
+      photo,
+      gender,
+      role,
+    };
     if (role === "patient") {
-      user = await User.create({
-        name,
-        email,
-        password: hashPassword,
-        photo,
-        gender,
-        role,
-      });
+      user = await authGateway.patientRegister(userInfo);
     } else if (role === "doctor") {
-      user = await Doctor.create({
-        name,
-        email,
-        password: hashPassword,
-        photo,
-        gender,
-        role,
-      });
+      user = await authGateway.registerDoctor(userInfo);
     }
+
     await user.save();
 
     delete user.password;
@@ -66,25 +72,33 @@ export const register = async (req, res) => {
       message: "Unexpected internal error. Please try again.",
     });
   }
-};{}
+};
+{
+}
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     let user = null;
-    const patient = await User.findOne({ email });
-    const doctor = await Doctor.findOne({ email });
+    const patient = await authGateway.findPatientByEmail(email);
+    const doctor = await authGateway.getDoctorByEmail(email);
 
     if (patient) {
       user = patient;
     } else if (doctor) {
       user = doctor;
     }
-    // check if user exist or not
     if (!user) {
       res.status(404).json({ message: "User not found." });
       return;
     }
     //compare password
+    // Check if user has a password before comparing
+    if (!user.password) {
+      res.status(400).json({ status: false, message: "Invalid credentials." });
+      return;
+    }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       res.status(400).json({ status: false, message: "Invalid credentials." });
@@ -101,8 +115,7 @@ export const login = async (req, res) => {
       role,
     });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ status: false, message: "Failed to login." });
   }
 };
-
-

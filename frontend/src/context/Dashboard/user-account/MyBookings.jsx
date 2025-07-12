@@ -12,12 +12,12 @@ function MyBookings() {
     loading,
     error,
   } = useFetchData(`${BASE_URL}/user/appointments/my-appointment`);
-  console.log(appointments)
+  
   return (
     <div>
       {loading && <Loading />}
       {error && <Error errMessage={error} />}
-      {!loading && !error && appointments.length === 0 && (
+      {!loading && !error && appointments?.length === 0 && (
         <h2 className="mt-5 text-center text-primary leading-7 text-[20px] font-semibold ">
           You did not book any doctor yet!
         </h2>

@@ -1,6 +1,10 @@
 import Booking from "../models/BookingSchema.js";
-import Doctor from "../models/DoctorSchema.js";
+import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
+import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
 import missingField from "../utils/checkField.js";
+
+const generateDoctorGateway = MixUnitOfWorkService(MixDoctorRepository(class{}));
+const doctorGateway = new generateDoctorGateway();
 
 export const updateDoctor = async (req, res) => {
   const id = req.params.id;
@@ -26,11 +30,7 @@ export const updateDoctor = async (req, res) => {
     // Filter out email from req.body to prevent duplicate key errors
     const { email, ...updateData } = req.body;
 
-    const updatedUser = await Doctor.findByIdAndUpdate(
-      id,
-      { $set: { ...updateData, isApproved: "approved" } },
-      { new: true }
-    ).select("-password");
+    const updatedUser = await doctorGateway.updateDoctorById(id, updateData); 
 
     if (updatedUser == null) {
       res.status(500).json({ success: false, message: "Failed to update" });
@@ -51,7 +51,7 @@ export const updateDoctor = async (req, res) => {
 export const deleteDoctor = async (req, res) => {
   const id = req.params.id;
   try {
-    await Doctor.findByIdAndDelete(id);
+    await doctorGateway.deleteDoctorById(id);
     res.status(200).json({
       success: true,
       message: "Successfully deleted.",
@@ -64,9 +64,7 @@ export const deleteDoctor = async (req, res) => {
 export const getSingleDoctor = async (req, res) => {
   const id = req.params.id;
   try {
-    const doctor = await Doctor.findById(id)
-      .populate("reviews")
-      .select("-password");
+    const doctor = await doctorGateway.getDoctorById(id)
     if (doctor === null) {
       res
         .status(500)
@@ -87,17 +85,9 @@ export const getAllDoctor = async (req, res) => {
     const { query } = req.query;
     let doctors;
     if (query) {
-      doctors = await Doctor.find({
-        isApproved: "approved",
-        $or: [
-          { name: { $regex: query, $options: "i" } },
-          { specialization: { $regex: query, $options: "i" } },
-        ],
-      }).select("-password");
+      doctors = await doctorGateway.getAllDoctorsByQuery(query);
     } else {
-      doctors = await Doctor.find({
-        isApproved: "approved",
-      }).select("-password");
+      doctors = await doctorGateway.getAllDoctors();
     }
     res.status(200).json({
       success: true,
@@ -111,7 +101,7 @@ export const getAllDoctor = async (req, res) => {
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.userId;
   try {
-    const doctor = await Doctor.findById(doctorId);
+    const doctor = await doctorGateway.getDoctorById(doctorId);
     if (!doctor) {
       res.status(404).json({ success: false, message: "User not found." });
       return;
