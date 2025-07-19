@@ -3,43 +3,59 @@ import { useContext } from "react";
 import { authContext } from "../../AuthContext";
 import MyBookings from "./MyBookings";
 import Profile from "./Profile";
-import useFetchData from "../../../hooks/useFetchData";
 import { BASE_URL } from "../../../config";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import HashLoader from "react-spinners/HashLoader";
+
 
 function MyAccount() {
-  const { dispatch, token } = useContext(authContext);
+  const { dispatch, token, user } = useContext(authContext);
   const [tab, setTab] = useState("bookings");
   const {
     data: userData,
-    loading,
     error,
-  } = useFetchData(`${BASE_URL}/user/profile/me`);
-  const handleLogout = () => {
-    dispatch({ type: "LOGOUT" });
-  };
-  const handleDeleteAccount = () => {
-    fetch(`${BASE_URL}/user/${userData._id}`, {
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["doctor"],
+    queryFn: () =>
+      fetch(`${BASE_URL}/user/profile/me`,{
+        method: 'GET',
+        headers:{
+          Authentication: `Bearer ${token}`
+        }
+      }).then((res) => res.json()),
+  });
+
+  const { mutate: handleDeleteAccount, isPending } = useMutation({
+    mutationFn: fetch(`${BASE_URL}/user/${user._id}`, {
       method: "DELETE",
       headers: {
         Authentication: `Bearer ${token}`,
       },
-    })
-      .then((res) => {
-        if (res.ok) {
-          dispatch({ type: "LOGOUT" });
-        }
-      })
-      .catch((err) => {
-        console.error("Error deleting account:", err);
-      });
+    }).then((res) => res),
+    onSuccess: (res) => {
+      if (res.ok) {
+        dispatch({ type: "LOGOUT" });
+      }
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
   };
+
   return (
     <div className="max-w-[1170px] px-5 max-auto">
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       {error && <Error errMessage={error} />}
-      {!loading && !error && (
+      {isSuccess && (
         <div className="grid md:grid-cols-3 gap-10">
           <div className="pb-[50px] px-[30px] rounded-md">
             <div className="flex items-center justify-center">
@@ -76,7 +92,11 @@ function MyAccount() {
                 onClick={handleDeleteAccount}
                 className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
               >
-                Delete Account
+                {isPending ? (
+                  <HashLoader size={25} color="#0066ff61" />
+                ) : (
+                  " Delete Account"
+                )}
               </button>
             </div>
           </div>

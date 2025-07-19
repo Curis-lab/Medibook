@@ -1,5 +1,5 @@
 import React from "react";
-import { FaYoutube } from "react-icons/fa";
+import { FaYoutube, FaFacebookF, FaTelegram } from "react-icons/fa";
 import logo from "../../assets/images/logo.svg";
 import { Link } from "react-router-dom";
 const socialLinks = [
@@ -9,15 +9,11 @@ const socialLinks = [
   },
   {
     path: "https://www.youtube.com",
-    icon: <FaYoutube className="group-hover:text-white w-4 h-5" />,
+    icon: <FaFacebookF className="group-hover:text-white w-4 h-5" />,
   },
   {
     path: "https://www.youtube.com",
-    icon: <FaYoutube className="group-hover:text-white w-4 h-5" />,
-  },
-  {
-    path: "https://www.youtube.com",
-    icon: <FaYoutube className="group-hover:text-white w-4 h-5" />,
+    icon: <FaTelegram className="group-hover:text-white w-4 h-5" />,
   },
 ];
 
@@ -74,7 +70,10 @@ function Footer() {
       <div className="container">
         <div className="flex justify-between flex-col md:flex-row flex-wrap gap-[30px]">
           <div>
-            <img src={logo} alt="" className="w-[50px] h-[50px]" />
+            <div className="flex items-center gap-[10px]">
+              <img src={logo} alt="" className="w-[50px] h-[50px]" />
+              <h1 className="text-2xl font-semibold">Medibook</h1>
+            </div>
             <p className="text-[16px] leading-7 font-[400] text-black mt-4">
               Copyright @ {year} developed by min nyan lin all right reserved.
             </p>

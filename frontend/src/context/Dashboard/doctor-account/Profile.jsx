@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL, token, user } from "../../../config";
 import { toast } from "react-toastify";
-import { useMutation , useQueryClient} from "@tanstack/react-query";
+import { useMutation , useQueryClient, useQuery} from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
 const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
@@ -42,6 +42,10 @@ function Profile() {
     about: "",
     timeSlots: [],
   });
+  const [timeSlot, setTimeSlot] = useState({
+    day:'',
+    
+  })
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -69,46 +73,54 @@ function Profile() {
     },
   });
 
-  useEffect(() => {
-    const fetchData = ()=>{
-      fetch(`${BASE_URL}/doctors/profile/me`, {
+  const { data: doctorData, isError, error } = useQuery({
+    queryKey: ['doctor-profile'],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/doctors/profile/me`, {
         headers: {
           Authentication: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          const { data } = result;
-          setFormData({
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            ticketPrice: data.ticketPrice,
-            specialization: data.specialization,
-            qualifications: {
-              university: data.qualifications?.university || "",
-              degree: data.qualifications?.degree || "",
-              startDate: data.qualifications?.startDate || "",
-              endDate: data.qualifications?.endDate || "",
-            },
-            experiences: {
-              hospitalName: data.experiences?.hospitalName || "",
-              position: data.experiences?.position || "",
-              startDate: data.experiences?.startDate || "",
-              endDate: data.experiences?.endDate || "",
-            },
-            bio: data.bio,
-            about: data.about,
-            timeSlots: data.timeSlots || [],
-          });
-        })
-        .catch((err) => {
-          toast.error(err.message);
-        });
-    };
-    fetchData();
-  }, []);
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+      return result;
+    },
+  });
+
+  useEffect(() => {
+    if (doctorData) {
+      const { data } = doctorData;
+      setFormData({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        ticketPrice: data.ticketPrice,
+        specialization: data.specialization,
+        qualifications: {
+          university: data.qualifications?.university || "",
+          degree: data.qualifications?.degree || "",
+          startDate: data.qualifications?.startDate || "",
+          endDate: data.qualifications?.endDate || "",
+        },
+        experiences: {
+          hospitalName: data.experiences?.hospitalName || "",
+          position: data.experiences?.position || "",
+          startDate: data.experiences?.startDate || "",
+          endDate: data.experiences?.endDate || "",
+        },
+        bio: data.bio,
+        about: data.about,
+        timeSlots: data.timeSlots || [],
+      });
+    }
+  }, [doctorData]);
+
+  if (isError) {
+    toast.error(error.message);
+  }
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -134,6 +146,11 @@ function Profile() {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
+  const handleTimeSlot =(e)=>{
+    e.preventDefault();
+    console.log(e.target.value);
+    setTimeSlot({...timeSlot, [e.target.name]:e.target.value});
+  }
   const requestInfos = [
     {
       onChange: handleChange,
@@ -197,10 +214,16 @@ function Profile() {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
             >
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              {[
+                {value: "", label: "Select"},
+                {value: "male", label: "Male"},
+                {value: "female", label: "Female"}, 
+                {value: "other", label: "Other"}
+              ].map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -324,11 +347,26 @@ function Profile() {
           <p className="form__label text-[16px] font-semibold text-textColor mb-2">
             Time Slots *
           </p>
+          <div className="mb-5">
+            {formData.timeSlots.map((slot, index) => (
+              <div key={index} className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md">
+                <div className="flex items-center gap-[10px]">
+                  <p className="text-[15px] leading-6 text-textColor font-semibold capitalize">
+                    {slot.day}:
+                  </p>
+                  <p className="text-[15px] leading-6 text-textColor">
+                    {slot.startTime} - {slot.endTime}
+                  </p>
+                </div>
+                
+              </div>
+            ))} 
+          </div>
           <div className="flex items-center gap-5">
             <select
               name="day"
-              value={formData.day}
-              onChange={handleChange}
+              value={timeSlot.day}
+              onChange={handleTimeSlot}
               className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
             >
               <option value="">Select Day</option>
@@ -345,18 +383,21 @@ function Profile() {
               type="time"
               name="startTime"
               className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-              value={formData.startTime}
-              onChange={handleChange}
+              value={timeSlot.startTime}
+              onChange={handleTimeSlot}
             />
 
             <input
               type="time"
               name="endTime"
               className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-              value={formData.endTime}
-              onChange={handleChange}
+              value={timeSlot.endTime}
+              onChange={handleTimeSlot}
             />
           </div>
+          <button onClick={()=>{
+            setFormData(prev=>({...prev, timeSlots:[...prev.timeSlots, timeSlot]}))
+          }} className="bg-blue-400 px-2 py-1 rounded-[4px]">Add</button>
         </div>
         <div className="mb-5">
           <p className="text-[16px] font-semibold text-textColor mb-2">About</p>

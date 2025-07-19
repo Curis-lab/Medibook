@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-// import uploadImageKitIO from "../utils/uploadImageKitIO";
 
 import { toast } from "react-toastify";
 import { BASE_URL, token, user } from "../../../config";

@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 
+
 import dotenv from "dotenv";
 
 import BaseRouter from "./routes/index.js";
@@ -24,7 +25,14 @@ export function startHTTPServer() {
   const port = process.env.PORT || 8000;
 
   const corsOptions = {
-    origin: true,
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://medibook-g32h.onrender.com'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'authentication'],
+    credentials: true
   };
 
   app.use(express.json());

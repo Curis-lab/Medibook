@@ -31,7 +31,8 @@ export const auth = async (req, res) => {
   });
 };
 export const register = async (req, res) => {
-  const { email, password, name, role, photo, gender } = req.body;
+  const { email, password, name, role, gender } = req.body;
+
   try {
     let user = null;
     if (role == "patient") {
@@ -42,15 +43,28 @@ export const register = async (req, res) => {
 
     if (user) {
       res.status(400).json({ message: "User already exist." });
+      return;
+    }
+    if (!req.file) {
+      res.status(400).json({ message: "Image is required!" });
+      return;
     }
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
-
+    const uploadedImage = await imagekit.upload({
+      file: req.file.buffer,
+      fileName: `${Date.now()}-${req.file.originalname}`,
+      useUniqueFileName: false,
+    });
+    if (!uploadedImage) {
+      res.status(400).json({ message: "Image upload is on error" });
+      return;
+    }
     const userInfo = {
       name,
       email,
       password: hashPassword,
-      photo,
+      photo: uploadedImage.url,
       gender,
       role,
     };
@@ -63,18 +77,14 @@ export const register = async (req, res) => {
     await user.save();
 
     delete user.password;
-    res
-      .status(200)
-      .json({ success: true, message: "user successfully created." });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected internal error. Please try again.",
+
+    res.status(200).json({
+      message: "Image upload successfully"
     });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error!" });
   }
 };
-{
-}
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -115,7 +125,7 @@ export const login = async (req, res) => {
       role,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({ status: false, message: "Failed to login." });
   }
 };

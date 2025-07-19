@@ -2,36 +2,36 @@ import React, { useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { BASE_URL } from "../../config";
 import { useParams } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import HashLoader from "react-spinners/HashLoader";
+import { patientReviews } from "../../apis/review";
+
 function FeedbackForm() {
   const { id } = useParams();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [reviewText, setReviewText] = useState("");
-  const handleSubmitReview = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`${BASE_URL}/doctors/${id}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authentication: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          reviewText,
-          rating,
-        }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to submit review");
-      }
-      const { data } = await res.json();
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ()=> patientReviews(id, reviewText, rating),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["doctor", parseInt(id)]);
+      toast.success("Review submitted successfully");
+      setRating(0);
+      setReviewText("");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   return (
-    <form action="" onSubmit={handleSubmitReview}>
+    <form action="" onSubmit={(e) =>{
+      e.preventDefault();
+      mutate()
+    }}>
       <div>
         <h3 className="text-black text-[16px] leading-6 font-semibold mb-4">
           How would you rate the overrall expericne?*
@@ -76,8 +76,12 @@ function FeedbackForm() {
           rows={5}
         />
       </div>
-      <button className="btn" type="submit" onClick={handleSubmitReview}>
-        Submit Feedback
+      <button className="btn" type="submit">
+        {isPending ? (
+          <HashLoader size={25} color="#0066ff61" />
+        ) : (
+          "Submit Feedback"
+        )}
       </button>
     </form>
   );

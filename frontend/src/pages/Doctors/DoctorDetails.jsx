@@ -1,49 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import DoctorAbout from "./DoctorAbout";
 import Feedback from "./Feedback";
 import SidePanel from "./SidePanel";
 import { useParams } from "react-router-dom";
-import { BASE_URL } from "../../config";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../components/Loader/Loading";
+import Error from "../../components/Error/Error";
+import { getDoctorDetails } from "../../apis/doctor";
+
 function DoctorDetails() {
   const [tab, setTab] = useState("about");
 
   const { id } = useParams();
-  const [doctorInfo, setDoctorInfo] = useState();
-
-  useEffect(() => {
-    const fetchDoctor = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/doctors/${id}`);
-        if (!res.ok) {
-          throw new Error("Failed to fetch doctor info");
-        }
-        const { data } = await res.json();
-        setDoctorInfo(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchDoctor();
-  }, []);
+  const {
+    data: doctorInfo,
+    error,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["doctor", parseInt(id)],
+    queryFn: () => getDoctorDetails(id),
+  });
   return (
     <section>
-      {doctorInfo && (
+      {isLoading && <Loading />}
+      {error && <Error errMessage={error} />}
+      {isSuccess && (
         <div className="max-w-[1270px] px-5 mx-auto md:flex">
           <div className="flex sm:flex-col">
             <div className="md:col-span-2">
-              <div
-                className="md:flex  gap-5 md:min-w-[800px]"
-              >
+              <div className="md:flex  gap-5 md:min-w-[800px]">
                 <figure>
-                  <img src={doctorInfo.photo} alt="" className="w-[300px] h-[300px] object-cover" />
+                  <img
+                    src={doctorInfo.data.photo}
+                    alt=""
+                    className="w-[300px] h-[300px] object-cover"
+                  />
                 </figure>
                 <div className="my-[15px]">
                   <span className="bg-[#ccf0f3] text-black py-1 px-6 lg:py-2 lg:px-6 text-[12px] leading-4 lg:text-[16px] lg:leading-7 font-semibold rounded-full">
-                    {doctorInfo.specialization}
+                    {doctorInfo.data.specialization}
                   </span>
                   <h3 className="text-black text-[22px] leading-9 mt-3 font-bold">
-                    {doctorInfo.name}
+                    {doctorInfo.data.name}
                   </h3>
                   <div className="flex items-center gap-[6px]">
                     <span className="flex items-center gap-[6px] text-[14px] leading-5 lg:text-[16px] lg:leading-7 font-semibold text-black">
@@ -55,7 +55,7 @@ function DoctorDetails() {
                     </span>
                   </div>
                   <p className="text__parag text-[14px] leading-6 md:text-[15px] lg:max-w-[390px]">
-                    {doctorInfo.bio}
+                    {doctorInfo.data.bio}
                   </p>
                 </div>
               </div>
@@ -79,9 +79,9 @@ function DoctorDetails() {
               </div>
               <div className="mt-10">
                 {tab === "about" ? (
-                  <DoctorAbout {...doctorInfo} />
+                  <DoctorAbout {...doctorInfo.data} />
                 ) : (
-                  <Feedback {...doctorInfo} />
+                  <Feedback {...doctorInfo.data} />
                 )}
               </div>
             </div>

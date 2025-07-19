@@ -21,15 +21,12 @@
   .container {
     @apply w-full;
   }
-  section {
-    @apply py-[35px];
-  }
 }
 @media only screen and (max-width: 768px) {
   .heading {
     @apply text-[26px] leading-[36px];
   }
-  .text__parag {
+  .text__para {
     @apply text-[16px] leading-7 mt-3;
   }
 }

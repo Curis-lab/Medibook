@@ -1,148 +1,34 @@
 import React, { useState, useRef } from "react";
-// import uploadImageKitIO from "../utils/uploadImageKitIO";
-import {
-  ImageKitAbortError,
-  ImageKitInvalidRequestError,
-  ImageKitServerError,
-  ImageKitUploadNetworkError,
-  upload,
-} from "@imagekit/react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
-function Signup() {
-  const navigate = useNavigate();
-  const [previewURL, setPreviewURL] = useState(null);
+import registerImage from "../assets/svg/register/register.svg";
+import { useMutation } from "@tanstack/react-query";
+import HashLoader from "react-spinners/HashLoader";
+import { useNavigate } from "react-router-dom";
 
-  const [formData, setFormData] = useState({
+function Signup() {
+  const initialFormData = {
     name: "",
     email: "",
     password: "",
-    photo: "", //url for of image
+    photo: "",
     gender: "",
     role: "patient",
-  });
-
-  const fileInputRef = useRef(null);
-
-  const abortController = new AbortController();
-
-  const authenticator = async () => {
-    try {
-      // Perform the request to the upload authentication endpoint.
-      const response = await fetch(`${BASE_URL}/auth/auth`);
-      if (!response.ok) {
-        // If the server response is not successful, extract the error text for debugging.
-        const errorText = await response.text();
-        throw new Error(
-          `Request failed with status ${response.status}: ${errorText}`
-        );
-      }
-
-      // Parse and destructure the response JSON for upload credentials.
-      const data = await response.json();
-      const { signature, expire, token, publicKey } = data;
-      return { signature, expire, token, publicKey };
-    } catch (error) {
-      // Log the original error for debugging before rethrowing a new error.
-      console.error("Authentication error:", error);
-      throw new Error("Authentication request failed");
-    }
   };
-
+  const navigate = useNavigate();
+  const [previewURL, setPreviewURL] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+  const fileInputRef = useRef(null);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (formData) =>
+      fetch(`${BASE_URL}/auth/register`, {
+        method: "POST",
+        body: formData,
+      }).then((res) => res.json()),
+    onSuccess: () => navigate("/login"),
+  });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-
-    const fileInput = fileInputRef.current;
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-      alert("Please select a file to upload");
-      return;
-    }
-    const file = fileInput.files[0];
-    let authParams;
-    try {
-      authParams = await authenticator();
-    } catch (err) {
-      console.error("Failed to authenticate for upload: ", err);
-      toast.error("Failed to authenticate for upload");
-      return;
-    }
-
-    if (!authParams) {
-      toast.error("Authentication failed");
-      return;
-    }
-
-    const { signature, expire, token, publicKey } = authParams;
-    let data;
-    try {
-      console.log("----before----");
-console.log(authParams);
-      const uploadResponse = await upload({
-        expire,
-        token,
-        signature,
-        publicKey,
-        file,
-        fileName: file.name,
-        abortSignal: abortController.signal,
-        
-      }).catch(error => {
-        console.error('Upload failed:', error);
-        throw error;
-      });
-      // console.log(uploadResponse);
-      console.log(uploadResponse.url);
-
-      data = { ...formData, photo: uploadResponse.url };
-      console.log(data);
-    } catch (error) {
-      if (error instanceof ImageKitAbortError) {
-        console.error("Upload aborted:", error.reason);
-        toast.error("Upload was cancelled");
-      } else if (error instanceof ImageKitInvalidRequestError) {
-        console.error("Invalid request:", error.message);
-        toast.error("Invalid upload request");
-      } else if (error instanceof ImageKitUploadNetworkError) {
-        console.error("Network error:", error.message);
-        toast.error("Network error during upload");
-      } else if (error instanceof ImageKitServerError) {
-        console.error("Server error:", error.message);
-        toast.error("Server error during upload");
-      } else {
-        // Handle any other errors that may occur.
-        console.error("Upload error:", error);
-        toast.error("Upload failed");
-      }
-      return; // Exit early if upload fails
-    }
-
-    try {
-      const res = await fetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-      console.log(result);
-      toast.success("Registration successful");
-      navigate("/login");
-    } catch (err) {
-      toast.error(err.message);
-      console.error(err);
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
@@ -154,89 +40,99 @@ console.log(authParams);
 
     return () => URL.revokeObjectURL(previewUrl);
   };
+
+  const validateForm = () => {
+    const fileInput = fileInputRef.current;
+    if (!fileInput?.files?.length) {
+      alert("Please select a file to upload");
+      return false;
+    }
+    return true;
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("image", fileInputRef.current.files[0]);
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
+    });
+    mutate(formDataToSend);
+  };
+
+  const renderFormInput = (type, name, placeholder) => (
+    <div className="mb-5">
+      <input
+        className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary rounded-md cursor-pointer"
+        required
+        type={type}
+        placeholder={placeholder}
+        name={name}
+        value={formData[name]}
+        onChange={handleInputChange}
+      />
+    </div>
+  );
+
+  const renderSelect = (label, name, options) => (
+    <label className="text-black font-bold text-[16px] leading-7">
+      {label}{" "}
+      <select
+        name={name}
+        value={formData[name]}
+        onChange={handleInputChange}
+        className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
+      >
+        {options.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+
   return (
     <section>
       <div className="px-5 xl:px-0">
         <div className="max-w-[1170px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="hidden lg:block bg-primary rounded-l-lg">
-              <figure className="rounded-l-lg">
-                {/* <img src="" alt="" /> */}
+            <div className="hidden lg:block bg-primary rounded-l-[20px]">
+              <figure className="rounded-l-lg p-[100px]">
+                <img src={registerImage} alt="" />
               </figure>
             </div>
             <div className="rounded-l-lg lg:pl-16 py-10">
               <h3 className="text-black text-[22px] leading-9 font-bold mb-10">
                 Create an <span className="text-primary">account</span>
               </h3>
-              <form action="" onSubmit={submitHandler}>
-                <div className="mb-5">
-                  <input
-                    className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary rounded-md cursor-pointer"
-                    required
-                    type="text"
-                    placeholder="Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="mb-5">
-                  <input
-                    className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary rounded-md cursor-pointer"
-                    required
-                    type="email"
-                    placeholder="abcd@gmail.com"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="mb-5">
-                  <input
-                    className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary rounded-md cursor-pointer"
-                    required
-                    type="password"
-                    placeholder="********"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
-                </div>
+              <form onSubmit={submitHandler}>
+                {renderFormInput("text", "name", "Name")}
+                {renderFormInput("email", "email", "abcd@gmail.com")}
+                {renderFormInput("password", "password", "********")}
+
                 <div className="mb-5 flex items-center justify-between">
-                  <label className="text-black font-bold text-[16px] leading-7">
-                    Are you a:{" "}
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-                    >
-                      <option value="patient">Patient</option>
-                      <option value="doctor">Doctor</option>
-                    </select>
-                  </label>
-                  <label className="text-black font-bold text-[16px] leading-7">
-                    Gender:{" "}
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleInputChange}
-                      className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-                    >
-                      <option value="">Select</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </label>
+                  {renderSelect("Are you a:", "role", [
+                    { value: "patient", label: "Patient" },
+                    { value: "doctor", label: "Doctor" },
+                  ])}
+                  {renderSelect("Gender:", "gender", [
+                    { value: "", label: "Select" },
+                    { value: "male", label: "Male" },
+                    { value: "female", label: "Female" },
+                    { value: "other", label: "Other" },
+                  ])}
                 </div>
+
                 <div className="mb-5 flex items-center gap-3">
                   <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primary flex items-center justify-center">
                     <img
                       src={
-                        previewURL
-                          ? previewURL
-                          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuNhTZJTtkR6b-ADMhmzPvVwaLuLdz273wvQ&s"
+                        previewURL ||
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuNhTZJTtkR6b-ADMhmzPvVwaLuLdz273wvQ&s"
                       }
                       alt=""
                       className="w-full h-full object-cover rounded-full"
@@ -261,7 +157,11 @@ console.log(authParams);
                   </div>
                 </div>
                 <button type="submit" className="btn">
-                  Register
+                  {isPending ? (
+                    <HashLoader size={25} color="#fff" />
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </form>
             </div>

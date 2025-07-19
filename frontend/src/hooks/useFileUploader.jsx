@@ -32,6 +32,28 @@ export const uploadImg = async (file) => {
   try {
     const authParams = await authenticator();
     const { signature, expire, token, publicKey } = authParams;
+    
+    // Check if file with same name already exists in ImageKit
+    const existingFiles = await fetch(`${BASE_URL}/auth/check-file?fileName=${encodeURIComponent(file.name)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (existingFiles.ok) {
+      const existingData = await existingFiles.json();
+      if (existingData.exists) {
+        // File exists, return existing file URL
+        return {
+          success: true,
+          data: { url: existingData.url },
+          error: null,
+          abort: () => abortController.abort(),
+        };
+      }
+    }
+    
     const uploadResponse = await upload({
       expire,
       token,
@@ -81,15 +103,14 @@ export const uploadImg = async (file) => {
   }
 };
 
-const handleFileUpload = async(file)=>{
-  try{
-    const result = await uploadImg(file, 'my-image.jpg');
+const handleFileUpload = async (file) => {
+  try {
+    const result = await uploadImg(file, "my-image.jpg");
     return result.data;
-  }
-  catch(error){
-    console.error('Unexpected error: ', error)
+  } catch (error) {
+    console.error("Unexpected error: ", error);
     return error.message;
   }
-}
+};
 
 export default handleFileUpload;

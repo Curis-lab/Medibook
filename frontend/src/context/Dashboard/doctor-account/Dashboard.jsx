@@ -1,26 +1,27 @@
 import React, { useState } from "react";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
-import useFetchData from "../../../hooks/useFetchData";
 import { BASE_URL } from "../../../config";
 import Tabs from "./Tabs";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import DoctorAbout from "../../../pages/Doctors/DoctorAbout";
 import Profile from "./Profile";
 import Appointments from "./Appointments";
+import {useQuery} from '@tanstack/react-query';
 
 function Dashboard() {
-  const { data, loading, error } = useFetchData(
-    `${BASE_URL}/doctors/profile/me`
-  );
+  const {data, error, isLoading, isSuccess} =  useQuery({
+    queryKey:["doctor"],
+    queryFn:()=>fetch(`${BASE_URL}/doctors/profile/me`).then(res=>res.json())
+  })
   const [tab, setTab] = useState("overview");
 
   return (
     <section>
       <div className="max-w-[1170px] px-5 mx-auto">
-        {loading && <Loading />}
+        {isLoading && <Loading />}
         {error && <Error errMessage={error} />}
-        {!loading && !error && (
+        {isSuccess && (
           <div className="grid lg:grid-cols-3 gap-[30px] lg:gap-[50px]">
             <Tabs tab={tab} setTab={setTab} />
             <div className="lg:col-span-2">
