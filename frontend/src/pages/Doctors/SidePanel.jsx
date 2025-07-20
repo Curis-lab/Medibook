@@ -6,11 +6,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../components/Loader/Loading";
 import Error from "../../components/Error/Error";
 import HashLoader from "react-spinners/HashLoader";
+import SlotsSelector from "./SlotsSelector";
 function SidePanel() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const {
-    data: slots,
+    data: doctorProfile,
     error,
     isLoading,
     isSuccess,
@@ -45,7 +46,7 @@ function SidePanel() {
       <div className="flex items-center justify-between">
         <p className="text__parag mt-0 font-semibold">Ticket Price</p>
         <span className="text-[16px] leading-7 lg:text-[22px] lg:leading-8 text-black font-bold">
-          500 USD
+          {isSuccess ? doctorProfile.data.ticketPrice : ""} USD
         </span>
       </div>
 
@@ -56,22 +57,25 @@ function SidePanel() {
         <ul className="mt-3">
           {isLoading && <Loading />}
           {error && <Error errMessage={error} />}
+
           {isSuccess &&
-            slots.data.timeSlots.map((slot, index) => (
-              <div key={index}>
-                <p className="text-[15px] leading-6 text-black font-semibold ">
-                  {slot.day.charAt(0).toUpperCase() + slot.day.slice(1)}
-                </p>
-                <li
-                  className="flex items-center justify-between mb-2"
-                  key={index}
-                >
-                  <p className="text-[15px] leading-6 text-black font-semibold">
-                    {slot.startTime} - {slot.endTime}
-                  </p>
-                </li>
-              </div>
-            ))}
+            // doctorProfile.data.timeSlots.map((slot, index) => (
+            //   <div key={index}>
+            //     <p className="text-[15px] leading-6 text-black font-semibold ">
+            //       {slot.day.charAt(0).toUpperCase() + slot.day.slice(1)}
+            //     </p>
+            //     <li
+            //       className="flex items-center justify-between mb-2"
+            //       key={index}
+            //     >
+            //       <p className="text-[15px] leading-6 text-black font-semibold">
+            //         {slot.startTime} - {slot.endTime}
+            //       </p>
+            //     </li>
+            //   </div>
+            // ))
+            <SlotsSelector {...doctorProfile.data.timeSlots}/>
+            }
         </ul>
       </div>
       <button onClick={() => mutate()} className="btn px-2 w-full rounded-md">

@@ -9,7 +9,7 @@ function Feedback({ reviews }) {
   return (
     <div className="mb-[50px]">
       <h4 className="text-[20px] leading-[30px] font-bold text-primary mb-[30px]">
-        All reviews (424)
+        All reviews ({reviews.length})
       </h4>
       {reviews.map((review, idx) => (
         <div key={idx} className="flex justify-between gap-10 mb-[30px]">

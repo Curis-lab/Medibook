@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL, token, user } from "../../../config";
 import { toast } from "react-toastify";
-import { useMutation , useQueryClient, useQuery} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
 const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
@@ -43,9 +43,8 @@ function Profile() {
     timeSlots: [],
   });
   const [timeSlot, setTimeSlot] = useState({
-    day:'',
-    
-  })
+    day: "",
+  });
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -65,7 +64,7 @@ function Profile() {
       return result;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({queryKey: ['doctor']});
+      queryClient.invalidateQueries({ queryKey: ["doctor"] });
       toast.success(data.message);
     },
     onError: (error) => {
@@ -73,19 +72,20 @@ function Profile() {
     },
   });
 
-  const { data: doctorData, isError, error } = useQuery({
-    queryKey: ['doctor-profile'],
+  const {
+    data: doctorData,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["doctor"],
     queryFn: async () => {
       const res = await fetch(`${BASE_URL}/doctors/profile/me`, {
         headers: {
-          Authentication: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Authentication: `Bearer ${token}`,
         },
       });
       const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
       return result;
     },
   });
@@ -146,11 +146,11 @@ function Profile() {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
-  const handleTimeSlot =(e)=>{
+  const handleTimeSlot = (e) => {
     e.preventDefault();
     console.log(e.target.value);
-    setTimeSlot({...timeSlot, [e.target.name]:e.target.value});
-  }
+    setTimeSlot({ ...timeSlot, [e.target.name]: e.target.value });
+  };
   const requestInfos = [
     {
       onChange: handleChange,
@@ -186,7 +186,6 @@ function Profile() {
     },
   ];
 
-
   return (
     <div className="px-5 py-8">
       <h2 className="text-black font-bold text-[24px] leading-9 mb-10">
@@ -215,11 +214,11 @@ function Profile() {
               className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
             >
               {[
-                {value: "", label: "Select"},
-                {value: "male", label: "Male"},
-                {value: "female", label: "Female"}, 
-                {value: "other", label: "Other"}
-              ].map(option => (
+                { value: "", label: "Select" },
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+                { value: "other", label: "Other" },
+              ].map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -349,7 +348,10 @@ function Profile() {
           </p>
           <div className="mb-5">
             {formData.timeSlots.map((slot, index) => (
-              <div key={index} className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md">
+              <div
+                key={index}
+                className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md"
+              >
                 <div className="flex items-center gap-[10px]">
                   <p className="text-[15px] leading-6 text-textColor font-semibold capitalize">
                     {slot.day}:
@@ -358,9 +360,8 @@ function Profile() {
                     {slot.startTime} - {slot.endTime}
                   </p>
                 </div>
-                
               </div>
-            ))} 
+            ))}
           </div>
           <div className="flex items-center gap-5">
             <select
@@ -395,9 +396,17 @@ function Profile() {
               onChange={handleTimeSlot}
             />
           </div>
-          <button onClick={()=>{
-            setFormData(prev=>({...prev, timeSlots:[...prev.timeSlots, timeSlot]}))
-          }} className="bg-blue-400 px-2 py-1 rounded-[4px]">Add</button>
+          <button
+            onClick={() => {
+              setFormData((prev) => ({
+                ...prev,
+                timeSlots: [...prev.timeSlots, timeSlot],
+              }));
+            }}
+            className="bg-blue-400 px-2 py-1 rounded-[4px]"
+          >
+            Add
+          </button>
         </div>
         <div className="mb-5">
           <p className="text-[16px] font-semibold text-textColor mb-2">About</p>

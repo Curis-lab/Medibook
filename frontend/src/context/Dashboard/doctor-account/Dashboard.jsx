@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
-import { BASE_URL } from "../../../config";
 import Tabs from "./Tabs";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import DoctorAbout from "../../../pages/Doctors/DoctorAbout";
 import Profile from "./Profile";
 import Appointments from "./Appointments";
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
+import { getDoctorProfile } from "../../../apis/doctor";
 
 function Dashboard() {
-  const {data, error, isLoading, isSuccess} =  useQuery({
-    queryKey:["doctor"],
-    queryFn:()=>fetch(`${BASE_URL}/doctors/profile/me`).then(res=>res.json())
-  })
+  const {
+    data: doctorProfile,
+    error,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["doctor-profile"],
+    queryFn: ()=>getDoctorProfile(),
+  });
   const [tab, setTab] = useState("overview");
-
   return (
     <section>
       <div className="max-w-[1170px] px-5 mx-auto">
@@ -25,7 +29,7 @@ function Dashboard() {
           <div className="grid lg:grid-cols-3 gap-[30px] lg:gap-[50px]">
             <Tabs tab={tab} setTab={setTab} />
             <div className="lg:col-span-2">
-              {data.isApproved === "pending" && (
+              {doctorProfile.data.isApproved === "pending" && (
                 <div className="flex p-4 mb-4 text-yellow-800 bg-yellow-50 rounded-lg">
                   <svg
                     aria-hidden="true"
@@ -54,7 +58,7 @@ function Dashboard() {
                     <div className="flex items-center gap-4 mb-10">
                       <figure className="max-w-[200px] max-h-[200px]">
                         <img
-                          src={data?.photo}
+                          src={doctorProfile.data.photo}
                           alt="doctor photo"
                           className="w-full h-full object-cover"
                         />
@@ -64,26 +68,30 @@ function Dashboard() {
                           surgeon
                         </span>
                         <h3 className="text-[22px] leading-9 font-bold text-primary mt-3">
-                          {data?.name}
+                          {doctorProfile.data.name}
                         </h3>
                         <div className="flex items-center gap-[6px]">
                           <span className="flex items-center gap-[6px] text-primary text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
                             <MdOutlineStarPurple500 />
-                            4.5
+                            {doctorProfile.data.totalRating}
                           </span>
                           <span className=" text-black text-[14px] leading-5 lg:[16px] lg:leading-6 font-semibold">
                             (233)
                           </span>
                         </div>
                         <p className=" font-[15px] lg:max-w-[390px] leading-6">
-                          doctor bio
+                          {doctorProfile.data.bio}
                         </p>
                       </div>
                     </div>
-                    <DoctorAbout {...data} />
+                    <DoctorAbout {...doctorProfile.data} />
                   </div>
                 )}
-                {tab === "appointments" && <Appointments appointments={[...data.appointments]}/>}
+                {tab === "appointments" && (
+                  <Appointments
+                    appointments={[...doctorProfile.data.appointments]}
+                  />
+                )}
                 {tab === "settings" && <Profile />}
               </div>
             </div>
