@@ -26,9 +26,8 @@ export function startHTTPServer() {
 
   const corsOptions = {
     origin: [
-      'http://localhost:3000',
       'http://localhost:5173',
-      'https://medibook-g32h.onrender.com'
+      'https://medibook-jade.vercel.app'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'authentication'],
