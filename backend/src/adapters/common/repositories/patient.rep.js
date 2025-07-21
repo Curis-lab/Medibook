@@ -27,5 +27,8 @@ export function MixPatientRepository(Gateway) {
     async deletePatientById(id){
         return await Patient.findByIdAndDelete(id);
     }
+    async findPatientsByIds(patientIds) {
+      return await Patient.find({ _id: { $in: patientIds } }).select("-password");
+    }
   };
 }

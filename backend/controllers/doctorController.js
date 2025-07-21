@@ -1,9 +1,12 @@
 import Booking from "../models/BookingSchema.js";
 import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
+import { MixPatientRepository } from "../src/adapters/common/repositories/patient.rep.js";
 import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
 import missingField from "../utils/checkField.js";
 
-const generateDoctorGateway = MixUnitOfWorkService(MixDoctorRepository(class{}));
+const generateDoctorGateway = MixUnitOfWorkService(
+  MixDoctorRepository(MixPatientRepository(class {}))
+);
 const doctorGateway = new generateDoctorGateway();
 
 export const updateDoctor = async (req, res) => {
@@ -30,7 +33,7 @@ export const updateDoctor = async (req, res) => {
     // Filter out email from req.body to prevent duplicate key errors
     const { email, ...updateData } = req.body;
 
-    const updatedUser = await doctorGateway.updateDoctorById(id, updateData); 
+    const updatedUser = await doctorGateway.updateDoctorById(id, updateData);
 
     if (updatedUser == null) {
       res.status(500).json({ success: false, message: "Failed to update" });
@@ -64,7 +67,7 @@ export const deleteDoctor = async (req, res) => {
 export const getSingleDoctor = async (req, res) => {
   const id = req.params.id;
   try {
-    const doctor = await doctorGateway.getDoctorById(id)
+    const doctor = await doctorGateway.getDoctorById(id);
     if (doctor === null) {
       res
         .status(500)
@@ -108,7 +111,7 @@ export const getDoctorProfile = async (req, res) => {
     }
     const { password, ...rest } = doctor._doc;
     const appointments = await Booking.find({ doctor: doctorId });
-    //I should know it exectly 
+    //I should know it exectly
     res.status(200).json({
       success: true,
       message: "Profile Info is getting.",
@@ -118,5 +121,53 @@ export const getDoctorProfile = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Something went wrong, cannot get" });
+  }
+};
+
+export const getDoctorAppointments = async (req, res) => {
+  const doctorId = req.userId;
+  try {
+    const doctor = await doctorGateway.getDoctorById(doctorId);
+    if (!doctor) {
+      res.status(404).json({ success: false, message: "User not found." });
+      return;
+    }
+    const { password, ...rest } = doctor._doc;
+    const appointments = await Booking.find({ doctor: doctorId });
+    const patientIds = appointments.map((appointment) => appointment.user);
+    const patients = await doctorGateway.findPatientsByIds(patientIds);
+
+    // console.log(patients);
+    const result = appointments.map((appointment) => {
+      const patient = patients.find(
+        (p) => p._id.toString() === appointment.user.toString()
+      );
+      return {
+        id: appointment._id,
+        name: patient?.name,
+        gender: patient?.gender,
+        time: appointment.appointmentDate,
+        patientPhoto: patient?.photo,
+        patientBloodType: patient?.bloodType,
+        paidStatus: appointment.isPaid,
+        patientPhone: patient?.phone,
+      };
+    });
+
+    //should return person
+    /**
+     * patient name, patient.gender, time, patient.photo, patien.bloodType, paidStatus, patient.phone
+     */
+    res.status(200).json({
+      success: true,
+      message: "Appointments found successfully",
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get appointments",
+    });
   }
 };

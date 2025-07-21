@@ -22,8 +22,8 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email":"smit@gmail.com",
-    "password":"smit"
+    "email":"man@gmail.com",
+    "password":"man"
 }
 
 
@@ -145,7 +145,7 @@ Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUyMDc0MDM5LCJleHAiOjE3NTMzNzAwMzl9.Ltz6XOJerlk4fw9-kVSWrcwDlK6EgPYo81i_bD151K8
 
 
-### doctor appointment
+### doctor appointment (user)
 GET http://localhost:8000/api/v1/user/appointments/my-appointment
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBlYzA1MGRkYTE0Yzk1N2U2ZWQzZiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTIwNzY3NDAsImV4cCI6MTc1MzM3Mjc0MH0.C3fLl_Gp2FnuCTC6aii5fC9Mg-5PyxHWpdJnUzRNjaM
@@ -153,7 +153,9 @@ Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBlYzA1
 ### doctor profile (used)
 GET http://localhost:8000/api/v1/doctors/profile/me
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
-
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NzdkMzRlZDIxYmQ3ZDRhMDdkNDdmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTMwNDE1NTgsImV4cCI6MTc1NDMzNzU1OH0.1dCkZnrOkjFelnUT3L5rh9yOc3rYpaE9thf05AwqW7w
 
 ### appointment for doctor's profile
+GET http://localhost:8000/api/v1/doctors/appointments-list/me
+Content-Type: application/json
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NzdkMzRlZDIxYmQ3ZDRhMDdkNDdmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTMwNDE1NTgsImV4cCI6MTc1NDMzNzU1OH0.1dCkZnrOkjFelnUT3L5rh9yOc3rYpaE9thf05AwqW7w

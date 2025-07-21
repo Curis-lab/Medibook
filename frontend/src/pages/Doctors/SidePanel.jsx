@@ -20,7 +20,7 @@ function SidePanel() {
     queryFn: () => fetch(`${BASE_URL}/doctors/${id}`).then((res) => res.json()),
   });
   const { mutate, isPending } = useMutation({
-    mutation: async () => {
+    mutationFn: async () => {
       const res = await fetch(`${BASE_URL}/bookings/checkout-session/${id}`, {
         method: "POST",
         headers: {
@@ -28,9 +28,7 @@ function SidePanel() {
         },
       });
       const data = await res.json();
-      if (!data.ok) {
-        throw new Error(data.message);
-      }
+      
       return data;
     },
     onSuccess: (data) => {
@@ -38,6 +36,7 @@ function SidePanel() {
       window.location.href = data.session.url;
     },
     onError: (error) => {
+      console.log(error)
       toast.error(error.message);
     },
   });
@@ -54,31 +53,22 @@ function SidePanel() {
         <p className="text__parag mt-0 font-semibold text-black">
           Available Time Slots:
         </p>
-        <ul className="mt-3">
+        <div className="mt-3">
           {isLoading && <Loading />}
           {error && <Error errMessage={error} />}
 
-          {isSuccess &&
-            // doctorProfile.data.timeSlots.map((slot, index) => (
-            //   <div key={index}>
-            //     <p className="text-[15px] leading-6 text-black font-semibold ">
-            //       {slot.day.charAt(0).toUpperCase() + slot.day.slice(1)}
-            //     </p>
-            //     <li
-            //       className="flex items-center justify-between mb-2"
-            //       key={index}
-            //     >
-            //       <p className="text-[15px] leading-6 text-black font-semibold">
-            //         {slot.startTime} - {slot.endTime}
-            //       </p>
-            //     </li>
-            //   </div>
-            // ))
-            <SlotsSelector {...doctorProfile.data.timeSlots}/>
-            }
-        </ul>
+          {isSuccess && (
+            <div>
+              {doctorProfile.data.timeSlots.length > 0 ? (
+                <SlotsSelector {...doctorProfile.data.timeSlots} />
+              ) : (
+                <p className="font-bold text-center text-red-500 bg-[#f5f6ee] p-2 rounded-md">There is no slots</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-      <button onClick={() => mutate()} className="btn px-2 w-full rounded-md">
+      <button onClick={mutate} className="btn px-2 w-full rounded-md">
         {isPending ? (
           <HashLoader size={25} color="#0066ff61" />
         ) : (

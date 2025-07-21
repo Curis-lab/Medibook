@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { formateDate } from "../../utils/formatDAte";
 import { AiFillStar } from "react-icons/ai";
 import FeedbackForm from "./FeedbackForm";
+import {authContext} from '../../context/AuthContext';
 
 function Feedback({ reviews }) {
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-
+  const {role} = useContext(authContext);
   return (
     <div className="mb-[50px]">
       <h4 className="text-[20px] leading-[30px] font-bold text-primary mb-[30px]">
@@ -40,7 +41,8 @@ function Feedback({ reviews }) {
           </div>
         </div>
       ))}
-      {!showFeedbackForm && (
+
+      {!showFeedbackForm && ( role === 'patient') && (
         <div className="text-center">
           <button onClick={() => setShowFeedbackForm(true)} className="btn">
             Give Feedback

@@ -89,7 +89,6 @@ function Dashboard() {
                 )}
                 {tab === "appointments" && (
                   <Appointments
-                    appointments={[...doctorProfile.data.appointments]}
                   />
                 )}
                 {tab === "settings" && <Profile />}

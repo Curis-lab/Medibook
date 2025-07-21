@@ -19,7 +19,7 @@ function MyBookings() {
       fetch(`${BASE_URL}/user/appointments/my-appointment`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authentication: `Bearer ${token}`,
         },
       }).then((res) => res.json()),
   });
