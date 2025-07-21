@@ -56,9 +56,9 @@ Authentication: `Bearer `
 
 #----------------- doctors -------------------
 
-### get all doctors (used)
+### get all doctors (used)-public route
 # GET https://medibook-g32h.onrender.com/api/v1/doctors
-GET http://localhost:8000/api/v1/doctors
+GET http://localhost:8000/api/v1/doctors?query=man
 Content-Type: application/json
 
 

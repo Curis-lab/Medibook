@@ -20,7 +20,7 @@ function MyAccount() {
     isLoading,
     isSuccess,
   } = useQuery({
-    queryKey: ["doctor"],
+    queryKey: ["profile", user._id],
     queryFn: () =>
       fetch(`${BASE_URL}/user/profile/me`,{
         method: 'GET',
@@ -50,7 +50,7 @@ function MyAccount() {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
-
+  console.log('userData', userData);
   return (
     <div className="max-w-[1170px] px-5 max-auto">
       {isLoading && <Loading />}
@@ -61,7 +61,7 @@ function MyAccount() {
             <div className="flex items-center justify-center">
               <figure className="w-[100px] h-[100px] rounded-full border-2 border-solid border-primary">
                 <img
-                  src={userData.photo}
+                  src={userData.data.photo}
                   alt=""
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -69,15 +69,15 @@ function MyAccount() {
             </div>
             <div className="text-center mt-4">
               <h3 className="text-[18px] leading-[30px] text-primary font-bold">
-                {userData.name}
+                {userData.data.name}
               </h3>
               <p className="text-black text-[15px] leading-6 font-medium">
-                {userData.email}
+                {userData.data.email}
               </p>
               <p className="text-black text-[15px] leading-6 font-medium">
-                Blood Type:{" "}
+                Blood Type: {' '}
                 <span className="ml-2 text-primary text-[22px] leading-8">
-                  A+
+                {userData.data.bloodType}
                 </span>
               </p>
             </div>

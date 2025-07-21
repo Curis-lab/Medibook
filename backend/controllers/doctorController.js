@@ -85,10 +85,10 @@ export const getSingleDoctor = async (req, res) => {
 };
 export const getAllDoctor = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { search } = req.query;
     let doctors;
-    if (query) {
-      doctors = await doctorGateway.getAllDoctorsByQuery(query);
+    if (search) {
+      doctors = await doctorGateway.getAllDoctorsByQuery(search);
     } else {
       doctors = await doctorGateway.getAllDoctors();
     }

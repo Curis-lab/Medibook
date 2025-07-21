@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { BASE_URL, token, user } from "../../../config";
 import handleFileUpload from "../../../hooks/useFileUploader";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 function Profile() {
   const [previewURL, setPreviewURL] = useState(null);
@@ -19,6 +20,47 @@ function Profile() {
     role: "patient", // Set default value
   });
 
+  const {
+    data: userProfile,
+    error,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["profile", user._id],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/user/profile/me`, {
+        headers: {
+          Authentication: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      return data;
+    },
+  });
+  const { mutate: updateProfile } = useMutation({
+    mutationFn: (data) =>
+      fetch(`${BASE_URL}/user/${user._id}`, {
+        method: "PUT",
+        headers: {
+          Authentication: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: (res) => {
+      if (res.ok) {
+        toast.success("Profile updated successfully!");
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update profile");
+    },
+  });
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -42,22 +84,7 @@ function Profile() {
         data.photo = uploadResponse.url;
       }
 
-      const res = await fetch(`${BASE_URL}/user/${user._id}`, {
-        method: "PUT",
-        headers: {
-          Authentication: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-
-      toast.success("Profile updated successfully!");
+      updateProfile(data);
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Failed to update profile");
@@ -92,32 +119,18 @@ function Profile() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/user/${user._id}`, {
-          headers: {
-            Authentication: `Bearer ${token}`, // Fixed Authentication -> Authorization
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message);
-        }
-
-        setFormData((prev) => ({
-          ...prev,
-          ...data.data,
-          role: data.data.role || "patient", // Ensure role always has a value
-        }));
-      } catch (err) {
-        console.error("Failed to fetch profile:", err);
-        toast.error("Failed to load profile data");
-      }
-    };
-    fetchData();
-  }, []);
+    if (isSuccess) {
+      setFormData((prev) => ({
+        ...prev,
+        ...userProfile.data,
+        role: userProfile.data.role || "patient",
+      }));
+    }
+    if (error) {
+      console.error("Failed to fetch profile:", error);
+      toast.error("Failed to load profile data");
+    }
+  }, [userProfile, error, isSuccess]);
 
   return (
     <div>
