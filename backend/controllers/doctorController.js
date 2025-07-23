@@ -34,6 +34,7 @@ export const updateDoctor = async (req, res) => {
     // Filter out email from req.body to prevent duplicate key errors
     const { email, ...updateData } = req.body;
 
+
     const updatedUser = await doctorGateway.updateDoctorById(id, updateData);
 
     if (updatedUser == null) {

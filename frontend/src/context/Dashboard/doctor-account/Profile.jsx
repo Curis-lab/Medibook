@@ -4,78 +4,116 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
-// Reusable input component
-const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
-  <div className="mb-5">
-    <p className="text-[16px] font-semibold text-textColor mb-2">{label}</p>
-    <input
-      type={type}
-      className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-    />
+// Reusable form components
+const FormInput = ({ className = "", ...props }) => (
+  <input
+    className={`w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer ${className}`}
+    {...props}
+  />
+);
+
+const FormLabel = ({ children }) => (
+  <p className="text-[16px] font-semibold text-textColor mb-2">{children}</p>
+);
+
+const FormGroup = ({ label, children, className = "" }) => (
+  <div className={`mb-5 ${className}`}>
+    {label && <FormLabel>{label}</FormLabel>}
+    {children}
   </div>
 );
 
-// Reusable select component
-const SelectInput = ({ name, value, onChange, label, options }) => (
-  <div className="mb-5 w-1/2">
-    <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-      {label} *
-    </p>
+const LabelAndInput = ({ label, ...inputProps }) => (
+  <FormGroup label={label}>
+    <FormInput {...inputProps} />
+  </FormGroup>
+);
+
+const SelectInput = ({ label, options, className = "", ...props }) => (
+  <FormGroup label={label} className={className}>
     <select
-      name={name}
-      value={value}
-      onChange={onChange}
       className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+      {...props}
     >
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
+      {options.map(({ value, label }) => (
+        <option key={value} value={value}>
+          {label}
         </option>
       ))}
     </select>
-  </div>
+  </FormGroup>
 );
 
-// Reusable date input group component
 const DateInputGroup = ({ prefix, formData, handleChange }) => (
   <div className="grid grid-cols-2 gap-5">
     <div>
-      <input
+      <FormInput
         type="text"
         name={`${prefix}.university`}
         placeholder="University/College"
-        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+        className="mb-5"
         value={formData[prefix].university}
         onChange={handleChange}
       />
-      <input
+      <FormInput
         type="date"
         name={`${prefix}.startDate`}
-        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
         value={formData[prefix].startDate}
         onChange={handleChange}
       />
     </div>
     <div>
-      <input
+      <FormInput
         type="text"
         name={`${prefix}.degree`}
         placeholder="Degree"
-        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+        className="mb-5"
         value={formData[prefix].degree}
         onChange={handleChange}
       />
-      <input
+      <FormInput
         type="date"
         name={`${prefix}.endDate`}
-        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
         value={formData[prefix].endDate}
         onChange={handleChange}
       />
+    </div>
+  </div>
+);
+
+const QualificationCard = ({ degree, university, startDate, endDate }) => (
+  <div className="bg-[#fff9ea] p-3 rounded-md mb-2">
+    <h3 className="text-[16px] font-semibold text-headingColor leading-6">
+      {degree} at {university}
+    </h3>
+    <p className="text-[14px] leading-6 text-textColor">
+      {new Date(startDate).getFullYear()} - {new Date(endDate).getFullYear()}
+    </p>
+  </div>
+);
+
+const ExperienceCard = ({ hospitalName, position, startDate, endDate }) => (
+  <div className="grid grid-cols-2 gap-5 mb-5 border border-solid border-[#0066ff61] p-4 rounded-md">
+    <div>
+      <p className="text-[16px] font-semibold text-textColor mb-2">Hospital: {hospitalName}</p>
+      <p className="text-[14px] text-textColor">From: {startDate}</p>
+    </div>
+    <div>
+      <p className="text-[16px] font-semibold text-textColor mb-2">Position: {position}</p>
+      <p className="text-[14px] text-textColor">To: {endDate}</p>
+    </div>
+  </div>
+);
+
+const TimeSlotCard = ({ day, startTime, endTime }) => (
+  <div className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md">
+    <div className="flex items-center gap-[10px]">
+      <p className="text-[15px] leading-6 text-textColor font-semibold capitalize">
+        {day}:
+      </p>
+      <p className="text-[15px] leading-6 text-textColor">
+        {startTime} - {endTime}
+      </p>
     </div>
   </div>
 );
@@ -87,18 +125,8 @@ function Profile() {
     phone: "",
     ticketPrice: "",
     specialization: "",
-    qualifications: {
-      university: "",
-      degree: "",
-      startDate: "",
-      endDate: "",
-    },
-    experiences: {
-      hospitalName: "",
-      position: "",
-      startDate: "",
-      endDate: "",
-    },
+    qualifications: [],
+    experiences: [],
     bio: "",
     about: "",
     timeSlots: [],
@@ -106,6 +134,19 @@ function Profile() {
 
   const [formData, setFormData] = useState(initialFormState);
   const [timeSlot, setTimeSlot] = useState({ day: "" });
+  const [qualifications, setQualifications] = useState({
+    university: "",
+    degree: "",
+    startDate: "",
+    endDate: "",
+  });
+  const [experiences, setExperiences] = useState({
+    hospitalName: "",
+    position: "",
+    startDate: "",
+    endDate: "",
+  });
+
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -118,11 +159,7 @@ function Profile() {
         },
         body: JSON.stringify(formData),
       });
-      const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-      return result;
+      return res.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["doctor"] });
@@ -133,11 +170,7 @@ function Profile() {
     },
   });
 
-  const {
-    data: doctorData,
-    isError,
-    error,
-  } = useQuery({
+  const { data: doctorData, isError, error } = useQuery({
     queryKey: ["doctor"],
     queryFn: async () => {
       const res = await fetch(`${BASE_URL}/doctors/profile/me`, {
@@ -146,8 +179,7 @@ function Profile() {
           Authentication: `Bearer ${token}`,
         },
       });
-      const result = await res.json();
-      return result;
+      return res.json();
     },
   });
 
@@ -160,18 +192,8 @@ function Profile() {
         phone: data.phone,
         ticketPrice: data.ticketPrice,
         specialization: data.specialization,
-        qualifications: {
-          university: data.qualifications?.university || "",
-          degree: data.qualifications?.degree || "",
-          startDate: data.qualifications?.startDate || "",
-          endDate: data.qualifications?.endDate || "",
-        },
-        experiences: {
-          hospitalName: data.experiences?.hospitalName || "",
-          position: data.experiences?.position || "",
-          startDate: data.experiences?.startDate || "",
-          endDate: data.experiences?.endDate || "",
-        },
+        qualifications: [...data.qualifications],
+        experiences: [...data.experiences],
         bio: data.bio,
         about: data.about,
         timeSlots: data.timeSlots || [],
@@ -187,33 +209,57 @@ function Profile() {
     e.preventDefault();
     if (e.target.name.includes(".")) {
       const [section, field] = e.target.name.split(".");
-      setFormData({
-        ...formData,
+      setFormData(prev => ({
+        ...prev,
         [section]: {
-          ...formData[section],
+          ...prev[section],
           [field]: e.target.value,
         },
-      });
+      }));
     } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     }
   };
 
   const handleTimeSlot = (e) => {
-    e.preventDefault();
-    console.log("timeslot", e.target.value);
-    setTimeSlot({ ...timeSlot, [e.target.name]: e.target.value });
+    setTimeSlot(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const addQualifications = () => {
+    setFormData(prev => ({
+      ...prev,
+      qualifications: [...prev.qualifications, qualifications],
+    }));
+    setQualifications({
+      degree: "",
+      university: "",
+      startDate: "",
+      endDate: "",
+    });
+  };
+
+  const addExperiences = () => {
+    setFormData(prev => ({
+      ...prev,
+      experiences: [...prev.experiences, experiences],
+    }));
+    setExperiences({
+      hospitalName: "",
+      position: "",
+      startDate: "",
+      endDate: "",
+    });
   };
 
   const addTimeSlot = () => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       timeSlots: [...prev.timeSlots, timeSlot],
     }));
-    setTimeSlot({ day: "" }); // Reset time slot after adding
+    setTimeSlot({ day: "" });
   };
 
-  const requestInfos = [
+  const formFields = [
     {
       onChange: handleChange,
       value: formData.name,
@@ -227,7 +273,7 @@ function Profile() {
       value: formData.email,
       type: "email",
       placeholder: "Email",
-      name: "email",
+      name: "email", 
       label: "Email",
     },
     {
@@ -244,36 +290,36 @@ function Profile() {
       type: "text",
       placeholder: "Bio",
       name: "bio",
-      label: "Bio*",
+      label: "Bio *",
     },
   ];
 
-  const genderOptions = [
-    { value: "", label: "Select" },
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "other", label: "Other" },
-  ];
-
-  const specializationOptions = [
-    { value: "", label: "Select" },
-    { value: "surgeon", label: "Surgeon" },
-    { value: "neurologist", label: "Neurologist" },
-    { value: "dermatologist", label: "Dermatologist" },
-    { value: "pediatrician", label: "Pediatrician" },
-    { value: "cardiologist", label: "Cardiologist" },
-  ];
-
-  const dayOptions = [
-    { value: "", label: "Select Day" },
-    { value: "monday", label: "Monday" },
-    { value: "tuesday", label: "Tuesday" },
-    { value: "wednesday", label: "Wednesday" },
-    { value: "thursday", label: "Thursday" },
-    { value: "friday", label: "Friday" },
-    { value: "saturday", label: "Saturday" },
-    { value: "sunday", label: "Sunday" },
-  ];
+  const selectOptions = {
+    gender: [
+      { value: "", label: "Select" },
+      { value: "male", label: "Male" },
+      { value: "female", label: "Female" },
+      { value: "other", label: "Other" },
+    ],
+    specialization: [
+      { value: "", label: "Select" },
+      { value: "surgeon", label: "Surgeon" },
+      { value: "neurologist", label: "Neurologist" },
+      { value: "dermatologist", label: "Dermatologist" },
+      { value: "pediatrician", label: "Pediatrician" },
+      { value: "cardiologist", label: "Cardiologist" },
+    ],
+    days: [
+      { value: "", label: "Select Day" },
+      { value: "monday", label: "Monday" },
+      { value: "tuesday", label: "Tuesday" },
+      { value: "wednesday", label: "Wednesday" },
+      { value: "thursday", label: "Thursday" },
+      { value: "friday", label: "Friday" },
+      { value: "saturday", label: "Saturday" },
+      { value: "sunday", label: "Sunday" },
+    ],
+  };
 
   return (
     <div className="px-5 py-8">
@@ -287,8 +333,8 @@ function Profile() {
         }}
         className="max-w-[600px]"
       >
-        {requestInfos.map((info, idx) => (
-          <LabelAndInput {...info} key={idx} />
+        {formFields.map((field, idx) => (
+          <LabelAndInput key={idx} {...field} />
         ))}
 
         <div className="flex gap-5">
@@ -297,7 +343,8 @@ function Profile() {
             value={formData.gender}
             onChange={handleChange}
             label="Gender"
-            options={genderOptions}
+            options={selectOptions.gender}
+            className="w-1/2"
           />
 
           <SelectInput
@@ -305,89 +352,174 @@ function Profile() {
             value={formData.specialization}
             onChange={handleChange}
             label="Specialization"
-            options={specializationOptions}
+            options={selectOptions.specialization}
+            className="w-1/2"
           />
 
-          <div className="mb-5 w-1/2">
-            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-              Ticket Price *
-            </p>
-            <input
+          <FormGroup label="Ticket Price *" className="w-1/2">
+            <FormInput
               type="number"
               name="ticketPrice"
               value={formData.ticketPrice}
               onChange={handleChange}
               placeholder="100"
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
             />
+          </FormGroup>
+        </div>
+
+        <FormGroup label="Qualifications *">
+          {formData.qualifications.length > 0 && (
+            <div className="mb-5">
+              {formData.qualifications.map((qual, index) => (
+                <QualificationCard key={index} {...qual} />
+              ))}
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <FormInput
+                type="text"
+                name="university"
+                placeholder="University/College"
+                className="mb-5"
+                value={qualifications.university}
+                onChange={(e) =>
+                  setQualifications(prev => ({
+                    ...prev,
+                    university: e.target.value,
+                  }))
+                }
+              />
+              <FormInput
+                type="date"
+                name="startDate"
+                value={qualifications.startDate}
+                onChange={(e) =>
+                  setQualifications(prev => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <FormInput
+                type="text"
+                name="degree"
+                placeholder="Degree"
+                className="mb-5"
+                value={qualifications.degree}
+                onChange={(e) =>
+                  setQualifications(prev => ({
+                    ...prev,
+                    degree: e.target.value,
+                  }))
+                }
+              />
+              <FormInput
+                type="date"
+                name="endDate"
+                value={qualifications.endDate}
+                onChange={(e) =>
+                  setQualifications(prev => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <button className="btn" onClick={addQualifications}>Add Qualification</button>
           </div>
-        </div>
+        </FormGroup>
 
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-            Qualifications *
-          </p>
-          <DateInputGroup
-            prefix="qualifications"
-            formData={formData}
-            handleChange={handleChange}
-          />
-        </div>
+        <FormGroup label="Experiences *">
+          {formData.experiences.length > 0 && (
+            <div className="mb-5">
+              {formData.experiences.map((exp, index) => (
+                <ExperienceCard key={index} {...exp} />
+              ))}
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <FormInput
+                type="text"
+                name="hospitalName"
+                placeholder="Hospital Name"
+                className="mb-5"
+                value={experiences.hospitalName}
+                onChange={(e) =>
+                  setExperiences(prev => ({
+                    ...prev,
+                    hospitalName: e.target.value,
+                  }))
+                }
+              />
+              <FormInput
+                type="date"
+                name="startDate"
+                value={experiences.startDate}
+                onChange={(e) =>
+                  setExperiences(prev => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <FormInput
+                type="text"
+                name="position"
+                placeholder="Position"
+                className="mb-5"
+                value={experiences.position}
+                onChange={(e) =>
+                  setExperiences(prev => ({
+                    ...prev,
+                    position: e.target.value,
+                  }))
+                }
+              />
+              <FormInput
+                type="date"
+                name="endDate"
+                value={experiences.endDate}
+                onChange={(e) =>
+                  setExperiences(prev => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <button className="btn" onClick={addExperiences}>Add Experience</button>
+          </div>
+        </FormGroup>
 
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-            Experiences *
-          </p>
-          <DateInputGroup
-            prefix="experiences"
-            formData={formData}
-            handleChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-5">
-          <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-            Time Slots *
-          </p>
+        <FormGroup label="Time Slots *">
           <div className="mb-5">
             {formData.timeSlots.map((slot, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md"
-              >
-                <div className="flex items-center gap-[10px]">
-                  <p className="text-[15px] leading-6 text-textColor font-semibold capitalize">
-                    {slot.day}:
-                  </p>
-                  <p className="text-[15px] leading-6 text-textColor">
-                    {slot.startTime} - {slot.endTime}
-                  </p>
-                </div>
-              </div>
+              <TimeSlotCard key={index} {...slot} />
             ))}
           </div>
 
           <div className="flex items-center gap-5">
-            
             <SelectInput
               name="day"
               value={timeSlot.day}
               onChange={handleTimeSlot}
-              label=""
-              options={dayOptions}
-            /> 
-            <input
+              options={selectOptions.days}
+            />
+            <FormInput
               type="time"
               name="startTime"
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
               value={timeSlot.startTime}
               onChange={handleTimeSlot}
             />
-
-            <input
+            <FormInput
               type="time"
               name="endTime"
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
               value={timeSlot.endTime}
               onChange={handleTimeSlot}
             />
@@ -399,10 +531,9 @@ function Profile() {
           >
             Add
           </button>
-        </div>
+        </FormGroup>
 
-        <div className="mb-5">
-          <p className="text-[16px] font-semibold text-textColor mb-2">About</p>
+        <FormGroup label="About">
           <textarea
             name="about"
             rows="5"
@@ -411,7 +542,7 @@ function Profile() {
             placeholder="Write about yourself"
             className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
           ></textarea>
-        </div>
+        </FormGroup>
 
         <div className="mt-7">
           <button

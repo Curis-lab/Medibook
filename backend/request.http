@@ -62,7 +62,7 @@ GET http://localhost:8000/api/v1/doctors?query=man
 Content-Type: application/json
 
 
-###get single doctor (used)
+###get single doctor (used) (public)
 GET http://localhost:8000/api/v1/doctors/6860ec050dda14c957e6ed3f
 Content-Type: application/json
 

@@ -23,7 +23,6 @@ function MyBookings() {
         },
       }).then((res) => res.json()),
   });
-  console.log("myprofile", myProfile);
   return (
     <div>
       {isLoading && <Loading />}

@@ -39,7 +39,6 @@ function Doctors() {
     e.preventDefault();
     setDebouncedQuery(searchQuery); 
   };
-
   return (
     <>
       <section className="bg-[#fff9ea] py-[20px]">

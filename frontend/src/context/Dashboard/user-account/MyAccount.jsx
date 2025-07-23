@@ -29,7 +29,6 @@ function MyAccount() {
         }
       }).then((res) => res.json()),
   });
-
   const { mutate: handleDeleteAccount, isPending } = useMutation({
     mutationFn: fetch(`${BASE_URL}/user/${user._id}`, {
       method: "DELETE",
@@ -50,7 +49,7 @@ function MyAccount() {
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
-  console.log('userData', userData);
+
   return (
     <div className="max-w-[1170px] px-5 max-auto">
       {isLoading && <Loading />}

@@ -4,7 +4,7 @@ import registerImage from "../assets/svg/register/register.svg";
 import { useMutation } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 import { useNavigate } from "react-router-dom";
-
+import defaultProfile from '../assets/images/default.jpg';
 function Signup() {
   const initialFormData = {
     name: "",
@@ -131,8 +131,7 @@ function Signup() {
                   <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primary flex items-center justify-center">
                     <img
                       src={
-                        previewURL ||
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuNhTZJTtkR6b-ADMhmzPvVwaLuLdz273wvQ&s"
+                        previewURL || defaultProfile
                       }
                       alt=""
                       className="w-full h-full object-cover rounded-full"

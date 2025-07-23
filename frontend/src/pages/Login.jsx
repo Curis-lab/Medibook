@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { authContext } from "../context/AuthContext";
 import HashLoader from "react-spinners/HashLoader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 function Login() {
   const navigate = useNavigate();
   const { dispatch } = useContext(authContext);
@@ -29,7 +30,7 @@ function Login() {
       return result;
     },
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["doctor"] });
+      queryClient.invalidateQueries({ queryKey: ["doctor","profile"] });
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: {

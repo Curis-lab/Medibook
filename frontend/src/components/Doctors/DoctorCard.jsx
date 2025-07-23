@@ -11,7 +11,7 @@ function DoctorCard({
   totalRating,
   photo,
   totalPatients = 100,
-  hospital = "Standford University",
+  experiences
 }) {
   return (
     <div className="p-3 lg:p-5">
@@ -34,7 +34,7 @@ function DoctorCard({
           <h3 className="text-[16px] leading-7 lg:text-[18px] lg:leading-[30px] font-semibold text-black">
             +{totalPatients} patients
           </h3>
-          <p className="text-[14px] leading-6">At {hospital}</p>
+          <p className="text-[14px] leading-6">At {experiences[0].hospitalName}</p>
         </div>
         <Link
           to={`/doctors/${_id}`}
