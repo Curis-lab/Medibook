@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BASE_URL, token } from "../../config";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -7,9 +7,14 @@ import Loading from "../../components/Loader/Loading";
 import Error from "../../components/Error/Error";
 import HashLoader from "react-spinners/HashLoader";
 import SlotsSelector from "./SlotsSelector";
+
 function SidePanel() {
   const { id } = useParams();
+  const [isDisabled, setIsDisabled] = useState(true);
   const queryClient = useQueryClient();
+  const [acceptAppointmentDate, setAcceptAppointmentDate] = useState('');
+  
+  // Fetch doctor profile
   const {
     data: doctorProfile,
     error,
@@ -17,29 +22,53 @@ function SidePanel() {
     isSuccess,
   } = useQuery({
     queryKey: ["user-booking"],
-    queryFn: () => fetch(`${BASE_URL}/doctors/${id}`).then((res) => res.json()),
+    queryFn: async () => {
+      const response = await fetch(`${BASE_URL}/doctors/${id}`);
+      return response.json();
+    }
   });
+
+  // Handle booking mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`${BASE_URL}/bookings/checkout-session/${id}`, {
+      const response = await fetch(`${BASE_URL}/bookings/checkout-session/${id}`, {
         method: "POST",
         headers: {
           Authentication: `Bearer ${token}`,
+          "Content-Type": "application/json"
         },
+        body: JSON.stringify({
+          // appointmentDate: acceptAppointmentDate
+          appointmentDate: new Date().toISOString()
+        })
       });
-      const data = await res.json();
-      
-      return data;
+      return response.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["user-appointments"] });
-      window.location.href = data.session.url;
+      toast.success(data.message)
+      // window.location.href = data.session.url;
     },
     onError: (error) => {
-      console.log(error)
       toast.error(error.message);
     },
   });
+
+  const renderTimeSlots = () => {
+    if (isLoading) return <Loading />;
+    if (error) return <Error errMessage={error} />;
+    if (!isSuccess) return null;
+
+    const { timeSlots } = doctorProfile.data;
+    return timeSlots.length > 0 ? (
+      <SlotsSelector slots={timeSlots} handleDisabled={setIsDisabled} setAcceptAppointmentDate={setAcceptAppointmentDate} />
+    ) : (
+      <p className="font-bold text-center text-red-500 bg-[#f5f6ee] p-2 rounded-md">
+        There are no slots available
+      </p>
+    );
+  };
+
   return (
     <div className="w-1/2 p-3 lg:p-5 rounded-md">
       <div className="flex items-center justify-between">
@@ -54,21 +83,15 @@ function SidePanel() {
           Available Time Slots:
         </p>
         <div className="mt-3">
-          {isLoading && <Loading />}
-          {error && <Error errMessage={error} />}
-
-          {isSuccess && (
-            <div>
-              {doctorProfile.data.timeSlots.length > 0 ? (
-                <SlotsSelector {...doctorProfile.data.timeSlots} />
-              ) : (
-                <p className="font-bold text-center text-red-500 bg-[#f5f6ee] p-2 rounded-md">There is no slots</p>
-              )}
-            </div>
-          )}
+          {renderTimeSlots()}
         </div>
       </div>
-      <button onClick={mutate} className="btn px-2 w-full rounded-md">
+
+      <button 
+        disabled={isDisabled} 
+        onClick={mutate} 
+        className={`btn px-2 w-full rounded-md ${isDisabled ? "bg-[#88a7c8]" : ""}`}
+      >
         {isPending ? (
           <HashLoader size={25} color="#0066ff61" />
         ) : (

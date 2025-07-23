@@ -3,9 +3,6 @@ export default function MixUnitOfWorkService(Gateway) {
     constructor(...args) {
       super(...args);
     }
-    logg(){
-        return 'this is logging';
-    }
     startTransaction(){
         return 'this is start transition'
     }

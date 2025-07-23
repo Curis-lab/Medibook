@@ -22,7 +22,7 @@ function Home() {
                   numquam deserunt rem, repudiandae, cumque quos eius? Rem
                   ratione quos eius soluta. Rem ratione quos eius soluta.
                 </p>
-                <button className="btn">Request an Appointment</button>
+                <Link to="/doctors"className="btn">Request an Appointment</Link>
               </div>
               {/**===== hero counter ============ */}
 

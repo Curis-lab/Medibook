@@ -9,7 +9,7 @@
     @apply max-w-full w-[1440px] px-5 mx-auto;
   }
   .btn {
-    @apply bg-primary py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px];
+    @apply bg-primary py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px] cursor-pointer;
   }
 
   .heading {
@@ -25,8 +25,5 @@
 @media only screen and (max-width: 768px) {
   .heading {
     @apply text-[26px] leading-[36px];
-  }
-  .text__para {
-    @apply text-[16px] leading-7 mt-3;
   }
 }

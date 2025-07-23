@@ -1,11 +1,12 @@
-import Booking from "../models/BookingSchema.js";
+import { MixBookingRepository } from "../src/adapters/common/repositories/book.rep.js";
 import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
 import { MixPatientRepository } from "../src/adapters/common/repositories/patient.rep.js";
 import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
 import missingField from "../utils/checkField.js";
+import Booking from "../models/BookingSchema.js";
 
 const generateDoctorGateway = MixUnitOfWorkService(
-  MixDoctorRepository(MixPatientRepository(class {}))
+  MixBookingRepository(MixDoctorRepository(MixPatientRepository(class {})))
 );
 const doctorGateway = new generateDoctorGateway();
 
@@ -110,7 +111,8 @@ export const getDoctorProfile = async (req, res) => {
       return;
     }
     const { password, ...rest } = doctor._doc;
-    const appointments = await Booking.find({ doctor: doctorId });
+    // const appointments = await Booking.find({ doctor: doctorId });
+    const appointments = await doctorGateway.getBookingById({id:doctorId});
     //I should know it exectly
     res.status(200).json({
       success: true,
@@ -118,6 +120,7 @@ export const getDoctorProfile = async (req, res) => {
       data: { ...rest, appointments },
     });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ success: false, message: "Something went wrong, cannot get" });

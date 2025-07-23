@@ -32,7 +32,7 @@ function Tabs({ tab, setTab }) {
       <span>
         <BiMenu className="w-6 h-6 cursor-pointer" />
       </span>
-      <div className="hidden lg:flex flex-col p-[30px] bg-white shadow-md items-center h-max rounded-md">
+      <div className="hidden lg:flex flex-col p-[30px] bg-white shadow-md h-max rounded-md">
         <button
           onClick={() => setTab("overview")}
           className={`${
@@ -62,6 +62,16 @@ function Tabs({ tab, setTab }) {
           } w-full btn mt-0 rounded-md`}
         >
           Profile
+        </button>
+        <button
+          onClick={() => setTab("timeslot")}
+          className={`${
+            tab === "timeslot"
+              ? "bg-indigo-100 text-primary"
+              : "bg-transparent text-black"
+          } w-full btn mt-0 rounded-md`}
+        >
+          Time Slot Management
         </button>
       </div>
       <div className="mt-[100px] w-full">

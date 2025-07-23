@@ -8,6 +8,7 @@ import Profile from "./Profile";
 import Appointments from "./Appointments";
 import { useQuery } from "@tanstack/react-query";
 import { getDoctorProfile } from "../../../apis/doctor";
+import SelectTimeSlot from "./select-timeslot/SelectTimeSlot";
 
 function Dashboard() {
   const {
@@ -17,7 +18,7 @@ function Dashboard() {
     isSuccess,
   } = useQuery({
     queryKey: ["doctor-profile"],
-    queryFn: ()=>getDoctorProfile(),
+    queryFn: () => getDoctorProfile(),
   });
   const [tab, setTab] = useState("overview");
   return (
@@ -87,11 +88,9 @@ function Dashboard() {
                     <DoctorAbout {...doctorProfile.data} />
                   </div>
                 )}
-                {tab === "appointments" && (
-                  <Appointments
-                  />
-                )}
+                {tab === "appointments" && <Appointments />}
                 {tab === "settings" && <Profile />}
+                {tab === "timeslot" && <SelectTimeSlot />}
               </div>
             </div>
           </div>

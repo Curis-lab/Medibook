@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
+// Reusable input component
 const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
   <div className="mb-5">
     <p className="text-[16px] font-semibold text-textColor mb-2">{label}</p>
@@ -18,14 +19,74 @@ const LabelAndInput = ({ onChange, value, name, label, type, placeholder }) => (
   </div>
 );
 
+// Reusable select component
+const SelectInput = ({ name, value, onChange, label, options }) => (
+  <div className="mb-5 w-1/2">
+    <p className="form__label text-[16px] font-semibold text-textColor mb-2">
+      {label} *
+    </p>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+// Reusable date input group component
+const DateInputGroup = ({ prefix, formData, handleChange }) => (
+  <div className="grid grid-cols-2 gap-5">
+    <div>
+      <input
+        type="text"
+        name={`${prefix}.university`}
+        placeholder="University/College"
+        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+        value={formData[prefix].university}
+        onChange={handleChange}
+      />
+      <input
+        type="date"
+        name={`${prefix}.startDate`}
+        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+        value={formData[prefix].startDate}
+        onChange={handleChange}
+      />
+    </div>
+    <div>
+      <input
+        type="text"
+        name={`${prefix}.degree`}
+        placeholder="Degree"
+        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
+        value={formData[prefix].degree}
+        onChange={handleChange}
+      />
+      <input
+        type="date"
+        name={`${prefix}.endDate`}
+        className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
+        value={formData[prefix].endDate}
+        onChange={handleChange}
+      />
+    </div>
+  </div>
+);
+
 function Profile() {
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     name: "",
     email: "",
     phone: "",
     ticketPrice: "",
     specialization: "",
-    // qualifications: []
     qualifications: {
       university: "",
       degree: "",
@@ -41,10 +102,10 @@ function Profile() {
     bio: "",
     about: "",
     timeSlots: [],
-  });
-  const [timeSlot, setTimeSlot] = useState({
-    day: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
+  const [timeSlot, setTimeSlot] = useState({ day: "" });
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -124,21 +185,12 @@ function Profile() {
 
   const handleChange = (e) => {
     e.preventDefault();
-    if (e.target.name.startsWith("qualifications.")) {
-      const field = e.target.name.split(".")[1];
+    if (e.target.name.includes(".")) {
+      const [section, field] = e.target.name.split(".");
       setFormData({
         ...formData,
-        qualifications: {
-          ...formData.qualifications,
-          [field]: e.target.value,
-        },
-      });
-    } else if (e.target.name.startsWith("experiences.")) {
-      const field = e.target.name.split(".")[1];
-      setFormData({
-        ...formData,
-        experiences: {
-          ...formData.experiences,
+        [section]: {
+          ...formData[section],
           [field]: e.target.value,
         },
       });
@@ -146,11 +198,21 @@ function Profile() {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
+
   const handleTimeSlot = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
+    console.log("timeslot", e.target.value);
     setTimeSlot({ ...timeSlot, [e.target.name]: e.target.value });
   };
+
+  const addTimeSlot = () => {
+    setFormData((prev) => ({
+      ...prev,
+      timeSlots: [...prev.timeSlots, timeSlot],
+    }));
+    setTimeSlot({ day: "" }); // Reset time slot after adding
+  };
+
   const requestInfos = [
     {
       onChange: handleChange,
@@ -186,6 +248,33 @@ function Profile() {
     },
   ];
 
+  const genderOptions = [
+    { value: "", label: "Select" },
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" },
+  ];
+
+  const specializationOptions = [
+    { value: "", label: "Select" },
+    { value: "surgeon", label: "Surgeon" },
+    { value: "neurologist", label: "Neurologist" },
+    { value: "dermatologist", label: "Dermatologist" },
+    { value: "pediatrician", label: "Pediatrician" },
+    { value: "cardiologist", label: "Cardiologist" },
+  ];
+
+  const dayOptions = [
+    { value: "", label: "Select Day" },
+    { value: "monday", label: "Monday" },
+    { value: "tuesday", label: "Tuesday" },
+    { value: "wednesday", label: "Wednesday" },
+    { value: "thursday", label: "Thursday" },
+    { value: "friday", label: "Friday" },
+    { value: "saturday", label: "Saturday" },
+    { value: "sunday", label: "Sunday" },
+  ];
+
   return (
     <div className="px-5 py-8">
       <h2 className="text-black font-bold text-[24px] leading-9 mb-10">
@@ -201,49 +290,23 @@ function Profile() {
         {requestInfos.map((info, idx) => (
           <LabelAndInput {...info} key={idx} />
         ))}
-        <div className="flex gap-5">
-          {/* dropdown for specialization, gender, tickket price* */}
-          <div className="mb-5 w-1/2">
-            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-              Gender *
-            </p>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            >
-              {[
-                { value: "", label: "Select" },
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
-                { value: "other", label: "Other" },
-              ].map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
 
-          <div className="mb-5 w-1/2">
-            <p className="form__label text-[16px] font-semibold text-textColor mb-2">
-              Specialization *
-            </p>
-            <select
-              name="specialization"
-              value={formData.specialization}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            >
-              <option value="">Select</option>
-              <option value="surgeon">Surgeon</option>
-              <option value="neurologist">Neurologist</option>
-              <option value="dermatologist">Dermatologist</option>
-              <option value="pediatrician">Pediatrician</option>
-              <option value="cardiologist">Cardiologist</option>
-            </select>
-          </div>
+        <div className="flex gap-5">
+          <SelectInput
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            label="Gender"
+            options={genderOptions}
+          />
+
+          <SelectInput
+            name="specialization"
+            value={formData.specialization}
+            onChange={handleChange}
+            label="Specialization"
+            options={specializationOptions}
+          />
 
           <div className="mb-5 w-1/2">
             <p className="form__label text-[16px] font-semibold text-textColor mb-2">
@@ -264,84 +327,24 @@ function Profile() {
           <p className="form__label text-[16px] font-semibold text-textColor mb-2">
             Qualifications *
           </p>
-          <div className="grid grid-cols-2 gap-5">
-            <div>
-              <input
-                type="text"
-                name="qualifications.university"
-                placeholder="University/College"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
-                value={formData.qualifications.university}
-                onChange={handleChange}
-              />
-              <input
-                type="date"
-                name="qualifications.startDate"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-                value={formData.qualifications.startDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                name="qualifications.degree"
-                placeholder="Degree"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
-                value={formData.qualifications.degree}
-                onChange={handleChange}
-              />
-              <input
-                type="date"
-                name="qualifications.endDate"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-                value={formData.qualifications.endDate}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <DateInputGroup
+            prefix="qualifications"
+            formData={formData}
+            handleChange={handleChange}
+          />
         </div>
+
         <div className="mb-5">
           <p className="form__label text-[16px] font-semibold text-textColor mb-2">
             Experiences *
           </p>
-          <div className="grid grid-cols-2 gap-5">
-            <div>
-              <input
-                type="text"
-                name="experiences.hospitalName"
-                placeholder="Hospital/Clinic Name"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
-                value={formData.experiences.hospitalName}
-                onChange={handleChange}
-              />
-              <input
-                type="date"
-                name="experiences.startDate"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-                value={formData.experiences.startDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                name="experiences.position"
-                placeholder="Position"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer mb-5"
-                value={formData.experiences.position}
-                onChange={handleChange}
-              />
-              <input
-                type="date"
-                name="experiences.endDate"
-                className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-                value={formData.experiences.endDate}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <DateInputGroup
+            prefix="experiences"
+            formData={formData}
+            handleChange={handleChange}
+          />
         </div>
+
         <div className="mb-5">
           <p className="form__label text-[16px] font-semibold text-textColor mb-2">
             Time Slots *
@@ -363,23 +366,16 @@ function Profile() {
               </div>
             ))}
           </div>
+
           <div className="flex items-center gap-5">
-            <select
+            
+            <SelectInput
               name="day"
               value={timeSlot.day}
               onChange={handleTimeSlot}
-              className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-            >
-              <option value="">Select Day</option>
-              <option value="monday">Monday</option>
-              <option value="tuesday">Tuesday</option>
-              <option value="wednesday">Wednesday</option>
-              <option value="thursday">Thursday</option>
-              <option value="friday">Friday</option>
-              <option value="saturday">Saturday</option>
-              <option value="sunday">Sunday</option>
-            </select>
-
+              label=""
+              options={dayOptions}
+            /> 
             <input
               type="time"
               name="startTime"
@@ -397,17 +393,14 @@ function Profile() {
             />
           </div>
           <button
-            onClick={() => {
-              setFormData((prev) => ({
-                ...prev,
-                timeSlots: [...prev.timeSlots, timeSlot],
-              }));
-            }}
+            type="button"
+            onClick={addTimeSlot}
             className="bg-blue-400 px-2 py-1 rounded-[4px]"
           >
             Add
           </button>
         </div>
+
         <div className="mb-5">
           <p className="text-[16px] font-semibold text-textColor mb-2">About</p>
           <textarea
