@@ -11,24 +11,24 @@ export function MixPatientRepository(Gateway) {
     async findPatientByEmail(email) {
       return await Patient.findOne({ email });
     }
-    async findPatientById(id){
-        return await Patient.findById(id).select("-password")
+    async findPatientById(id) {
+      return await Patient.findById(id).select("-password");
     }
     async updatePatientById(id, updateData) {
-      return await Patient.findByIdAndUpdate(
-        id,
-        updateData,
-        { new: true }
-      ).select("-password");
+      return await Patient.findByIdAndUpdate(id, updateData, {
+        new: true,
+      }).select("-password");
     }
-    async getAllPatients(){
-        return await Patient.find().select("-password");
+    async getAllPatients() {
+      return await Patient.find().select("-password");
     }
-    async deletePatientById(id){
-        return await Patient.findByIdAndDelete(id);
+    async deletePatientById(id) {
+      return await Patient.findByIdAndDelete(id);
     }
     async findPatientsByIds(patientIds) {
-      return await Patient.find({ _id: { $in: patientIds } }).select("-password");
+      return await Patient.find({ _id: { $in: patientIds } }).select(
+        "-password"
+      );
     }
   };
 }

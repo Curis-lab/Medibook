@@ -40,7 +40,7 @@ function MyAccount() {
   };
 
   return (
-    <div className="max-w-[1170px] px-5 max-auto">
+    <div className="max-w-[1170px] px-5 max-auto lg:mt-[150px]">
       {isLoading && <Loading />}
       {error && <Error errMessage={error} />}
       {isSuccess && (

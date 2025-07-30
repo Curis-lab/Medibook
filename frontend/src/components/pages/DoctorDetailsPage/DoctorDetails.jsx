@@ -26,7 +26,7 @@ function DoctorDetails() {
     queryFn: () => getDoctorDetails(id),
   });
   return (
-    <section>
+    <section className="lg:mt-[150px]">
       {isLoading && <Loading />}
       {error && <Error errMessage={error} />}
       {isSuccess && (

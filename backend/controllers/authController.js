@@ -17,21 +17,28 @@ const generateAuthGateway = MixUnitOfWorkService(
 
 const authGateway = new generateAuthGateway();
 
-async function findUserByEmail(email) {
-  let user = null;
-  if (role == "patient") {
+async function findUserByEmailAndRole(email, role) {
+  let user;
+  if (role === "patient") {
     user = await authGateway.findPatientByEmail(email);
-  } else if (role == "doctor") {
+  } else if (role === "doctor") {
     user = await authGateway.getDoctorByEmail(email);
   }
   return user;
 }
-
+async function findUserByEmail(email){
+  let user;
+  user = await authGateway.getDoctorByEmail(email);
+  if(!user){
+    user = await authGateway.findPatientByEmail(email);
+  }
+  return user;
+}
 /** password processing */
 
 async function passwordSalting(passsword) {
   const salt = await bcrypt.genSalt(10);
-  const hashPassword = await bcrypt.hash(password, salt);
+  const hashPassword = await bcrypt.hash(passsword, salt);
   return hashPassword;
 }
 
@@ -58,35 +65,31 @@ export const auth = async (req, res) => {
     publicKey: "public_yRZslw98mgzoetGRkyyG2boI+nA=",
   });
 };
+
 export const register = async (req, res) => {
   const { email, password, name, role, gender } = req.body;
 
   try {
-    let user = await findUserByEmail(email);
-    if (user) {
-      res.status(400).json({ message: "User already exist." });
+    const existingUser = await findUserByEmailAndRole(email, role);
+    if (existingUser) {
+      res.status(400).json({ message: "Existing Email. Please change another." });
       return;
     }
 
     const hashPassword = await passwordSalting(password);
-    let uploadedImage = null;
 
-    if (req.file) {
-      uploadedImage = uploadImage(req.file);
-      if (!uploadedImage) {
-        res.status(400).json({ message: "Image upload is on error" });
-        return;
-      }
-    }
+    const uploadedImage = await uploadImage(req.file);
 
     const userInfo = {
       name,
       email,
       password: hashPassword,
-      photo: uploadedImage.url ? uploadedImage.url : "",
+      photo: uploadedImage.url,
       gender,
       role,
     };
+
+    let user;
 
     if (role === "patient") {
       user = await authGateway.patientRegister(userInfo);
@@ -102,6 +105,7 @@ export const register = async (req, res) => {
       message: "Image upload successfully",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Internal server error!" });
   }
 };
@@ -110,8 +114,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = null;
-    user = await findUserByEmail(email);
+    const user = await findUserByEmail(email);
 
     if (!user) {
       res.status(404).json({ message: "User not found." });
