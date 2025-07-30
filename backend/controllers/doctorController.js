@@ -34,7 +34,6 @@ export const updateDoctor = async (req, res) => {
     // Filter out email from req.body to prevent duplicate key errors
     const { email, ...updateData } = req.body;
 
-
     const updatedUser = await doctorGateway.updateDoctorById(id, updateData);
 
     if (updatedUser == null) {
@@ -85,24 +84,27 @@ export const getSingleDoctor = async (req, res) => {
     res.status(500).json({ success: false, message: "Doctor did not exist." });
   }
 };
+
+async function doctors(search) {
+  return search
+    ? await doctorGateway.getAllDoctorsByQuery(search)
+    : await doctorGateway.getAllDoctors();
+}
+
 export const getAllDoctor = async (req, res) => {
   try {
     const { search } = req.query;
-    let doctors;
-    if (search) {
-      doctors = await doctorGateway.getAllDoctorsByQuery(search);
-    } else {
-      doctors = await doctorGateway.getAllDoctors();
-    }
+    const docts = await doctors(search);
     res.status(200).json({
       success: true,
       message: "Doctors found.",
-      data: doctors,
+      data: docts,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: "Users did not exist." });
   }
 };
+
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.userId;
   try {
@@ -113,7 +115,7 @@ export const getDoctorProfile = async (req, res) => {
     }
     const { password, ...rest } = doctor._doc;
     // const appointments = await Booking.find({ doctor: doctorId });
-    const appointments = await doctorGateway.getBookingById({id:doctorId});
+    const appointments = await doctorGateway.getBookingById({ id: doctorId });
     //I should know it exectly
     res.status(200).json({
       success: true,
@@ -157,11 +159,6 @@ export const getDoctorAppointments = async (req, res) => {
         patientPhone: patient?.phone,
       };
     });
-
-    //should return person
-    /**
-     * patient name, patient.gender, time, patient.photo, patien.bloodType, paidStatus, patient.phone
-     */
     res.status(200).json({
       success: true,
       message: "Appointments found successfully",

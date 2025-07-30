@@ -19,7 +19,7 @@ function SlotsSelector({ slots, handleDisabled, setAcceptAppointmentDate }) {
   };
   //format of the date
   //'monday'+'00:35'+'12'+'2012'
-console.log(setAcceptAppointmentDate);
+console.log(typeof setAcceptAppointmentDate);
   return (
     <div className="bg-[#f5f8fb] p-[15px] rounded-md gap-6 flex flex-col min-w-[400px]">
       <div className="flex gap-2">

@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
-import { BASE_URL } from "../config";
-import registerImage from "../assets/svg/register/register.svg";
+import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 import { useNavigate } from "react-router-dom";
-import defaultProfile from '../assets/images/default.jpg';
+import registerImage from "../../../assets/svg/register/register.svg";
+import defaultProfile from '../../../assets/images/default.jpg';
+import { register } from "../../../apis/auth";
+
 function Signup() {
   const initialFormData = {
     name: "",
@@ -18,14 +19,12 @@ function Signup() {
   const [previewURL, setPreviewURL] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const fileInputRef = useRef(null);
+
   const { mutate, isPending } = useMutation({
-    mutationFn: (formData) =>
-      fetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        body: formData,
-      }).then((res) => res.json()),
+    mutationFn: (formData)=>register(formData),
     onSuccess: () => navigate("/login"),
   });
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -97,7 +96,7 @@ function Signup() {
 
   return (
     <section>
-      <div className="px-5 xl:px-0">
+      <div className="px-5 xl:px-0 lg:mt-[140px]">
         <div className="max-w-[1170px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="hidden lg:block bg-primary rounded-l-[20px]">

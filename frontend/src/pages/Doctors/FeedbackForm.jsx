@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { AiFillStar } from "react-icons/ai";
-import { BASE_URL } from "../../config";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";

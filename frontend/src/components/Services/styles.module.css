@@ -1,0 +1,65 @@
+
+
+.container {
+  position: relative;
+  overflow: hidden;
+  height: 300px;
+  border-radius: 10px;
+}
+
+.container a img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transform: scale(1.2);
+  transition: transform 0.3s ease-in-out;
+}
+.content {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  padding: 20px;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(21, 22, 24, 0.24) 0%, #151618 100%);
+  opacity: 0;
+  transition: background 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1.5rem;
+}
+.container:hover .content {
+  opacity: 1;
+}
+.container:hover img {
+  transform: scale(1);
+}
+.content main {
+  transform: translate3d(0, -6rem, 0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.content .footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transform: translate3d(0, 6rem, 0);
+  transition: transform 0.3s ease-in-out;
+}
+.container:hover .content main,
+.container:hover .content .footer {
+  transform: translate3d(0, 0, 0);
+}
+
+.container .content .footer .arrow{
+  padding: 15px;
+  background: #bc04d4;
+  border-radius: 50%;
+  transform: translate3d(-6rem, 0, 0) rotate(360deg);
+}
+.container:hover .content .footer .arrow{
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.3s ease-in-out;
+  transition-delay: 0.2s;
+}

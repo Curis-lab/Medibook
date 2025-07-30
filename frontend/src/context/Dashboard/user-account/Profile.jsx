@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import { toast } from "react-toastify";
-import { BASE_URL, token, user } from "../../../config";
+import {  user } from "../../../config";
 import handleFileUpload from "../../../hooks/useFileUploader";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { editCurrentPatientProfile, getCurrentUserProfile } from "../../../apis/patient";
 
 
 
@@ -28,28 +29,10 @@ function Profile() {
     isLoading,
   } = useQuery({
     queryKey: ["profile", user._id],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/user/profile/me`, {
-        headers: {
-          Authentication: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-
-      return data;
-    },
+    queryFn: getCurrentUserProfile,
   });
   const { mutate: updateProfile } = useMutation({
-    mutationFn: (data) =>
-      fetch(`${BASE_URL}/user/${user._id}`, {
-        method: "PUT",
-        headers: {
-          Authentication: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }),
+    mutationFn:(data)=> editCurrentPatientProfile(user._id, data),
     onSuccess: (res) => {
       if (res.ok) {
         toast.success("Profile updated successfully!");

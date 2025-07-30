@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 
-
 import dotenv from "dotenv";
 
 import BaseRouter from "./routes/index.js";
@@ -25,13 +24,10 @@ export function startHTTPServer() {
   const port = process.env.PORT || 8000;
 
   const corsOptions = {
-    origin: [
-      'http://localhost:5173',
-      'https://medibook-jade.vercel.app'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'authentication'],
-    credentials: true
+    origin: ["http://localhost:5173", "https://medibook-jade.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "authentication"],
+    credentials: true,
   };
 
   app.use(express.json());
@@ -48,6 +44,13 @@ export function startHTTPServer() {
 
   app.use("/api/v1", BaseRouter);
 
+  app.use((err, req, res, next) => {
+    req;
+    next;
+    return res.status(500).json({
+      error: err.message,
+    });
+  });
   app.listen(port, () => {
     connectDB();
     console.log("Server is lived.");

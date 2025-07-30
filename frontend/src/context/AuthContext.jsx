@@ -1,4 +1,5 @@
 import { createContext, useReducer, useEffect } from "react";
+
 const initialState = {
   user:
     localStorage.getItem("user") !== undefined

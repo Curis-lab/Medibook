@@ -1,13 +1,11 @@
-import React, { useContext } from "react";
-import { BASE_URL } from "../../../config";
+import React from "react";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
 import DoctorCard from "../../../components/Doctors/DoctorCard";
 import { useQuery } from "@tanstack/react-query";
-import { authContext } from "../../AuthContext";
+import { getCurrrentUserAppointment } from "../../../apis/booking";
 
 function MyBookings() {
-  const { token } = useContext(authContext);
   const {
     data: myProfile,
     isLoading,
@@ -15,13 +13,7 @@ function MyBookings() {
     isSuccess,
   } = useQuery({
     queryKey: ["user-appointments"],
-    queryFn: () =>
-      fetch(`${BASE_URL}/user/appointments/my-appointment`, {
-        method: "GET",
-        headers: {
-          Authentication: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
+    queryFn: getCurrrentUserAppointment,
   });
   return (
     <div>

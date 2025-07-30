@@ -7,7 +7,7 @@ function Layout() {
   return (
     <>
       <Header />
-      <main>
+      <main className="">
         <Router />
       </main>
       <Footer />

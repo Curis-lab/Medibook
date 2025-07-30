@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BASE_URL } from "../../../config";
+import { getDoctorProfileAppointment } from "../../../apis/doctor";
 
 function Appointments() {
   const {
@@ -9,16 +9,7 @@ function Appointments() {
     error,
   } = useQuery({
     queryKey: ["doctor-appointments"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/doctors/appointments-list/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authentication: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const result = await res.json();
-      return result.data;
-    },
+    queryFn: ()=>getDoctorProfileAppointment(),
   });
 
   if (isLoading) {
@@ -28,10 +19,9 @@ function Appointments() {
   if (error) {
     return <div>Error fetching appointments</div>;
   }
-
   return (
     <div className="flex flex-col gap-2">
-      {appointments?.map((appointment) => (
+      {appointments?.data.map((appointment) => (
         <div key={appointment.id} className="p-2 w-full bg-[#e1e5eb] rounded-md">
           <div className="flex">
             <img

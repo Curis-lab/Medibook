@@ -3,7 +3,7 @@ import DoctorCard from "../../components/Doctors/DoctorCard";
 import { useQuery } from "@tanstack/react-query";
 import Error from "../../components/Error/Error";
 import Loading from "../../components/Loader/Loading";
-import { BASE_URL } from "../../config";
+import { searchDoctorByQuery } from "../../apis/doctor";
 
 function Doctors() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,14 +25,7 @@ function Doctors() {
     isSuccess,
   } = useQuery({
     queryKey: ["doctors", debouncedQuery],
-    queryFn: async () => {
-      const query = debouncedQuery
-        ? `?search=${encodeURIComponent(debouncedQuery)}`
-        : "";
-      const res = await fetch(`${BASE_URL}/doctors${query}`);
-      if (!res.ok) throw new Error("Failed to fetch doctors");
-      return res.json();
-    },
+    queryFn: async () => await searchDoctorByQuery(debouncedQuery),
   });
 
   const handleSubmit = (e) => {
@@ -76,10 +69,8 @@ function Doctors() {
             </div>
           )}
           {isSuccess &&
-            doctors &&
-            doctors.data &&
             doctors.data.length === 0 && (
-              <div className="text-center mt-10 text-gray-500 font-bold text-red-700">
+              <div className="text-center mt-10 font-bold text-red-700">
                 No doctors found.
               </div>
             )}

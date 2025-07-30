@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../config";
 import { toast } from "react-toastify";
-import { authContext } from "../context/AuthContext";
+import React, { useState, useContext } from "react";
 import HashLoader from "react-spinners/HashLoader";
+import { Link, useNavigate } from "react-router-dom";
+import {authContext} from '../../../context/AuthContext';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { login } from "../../../apis/auth";
 
 function Login() {
   const navigate = useNavigate();
@@ -15,20 +15,7 @@ function Login() {
   });
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (formData) => {
-      const res = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-      return result;
-    },
+    mutationFn: async(formData)=>await login(formData),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["doctor","profile"] });
       dispatch({
@@ -39,6 +26,7 @@ function Login() {
           role: result.role,
         },
       });
+      console.log('result',result);
       toast.success(result.message);
       navigate("/home");
     },
@@ -54,7 +42,7 @@ function Login() {
   };
 
   return (
-    <section className="px-5 lg:px-0">
+    <section className="px-5 lg:px-0 lg:mt-[200px]">
       <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md md:p-10">
         <h3 className="text-black text-[22px] leading-9 font-bold mb-10">
           Hello! <span className="text-primary">Weclome</span> Back 🎉

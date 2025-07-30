@@ -1,35 +1,33 @@
 import { Routes, Route } from "react-router-dom";
-import {
-  Home,
-  Login,
-  Signup,
-  Contact,
-  MyAccount,
-  Doctors,
-  DoctorDetails,
-  Services,
-  CheckoutSuccess,
-  Dashboard
-} from "../pages/lazy";
 import ProtectedRouter from "./ProtectedRouter";
+import {
+  HomePage,
+  MediDoctorsListPage,
+  DoctorDetailsPage,
+  LoginPage,
+  RegistrationPage,
+  ContactPage,
+  ServicesPage,
+  PatientDashboardPage,
+  DoctorDashboardPage,
+} from "../components/pages";
 
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/doctors" element={<Doctors />} />
-      <Route path="/doctors/:id" element={<DoctorDetails />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Signup />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/checkout-success" element={<CheckoutSuccess />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/doctors" element={<MediDoctorsListPage />} />
+      <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegistrationPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/services" element={<ServicesPage />} />
       <Route
         path="/users/profile/me"
         element={
           <ProtectedRouter allowedRoles={["patient"]}>
-            <MyAccount />
+            <PatientDashboardPage />
           </ProtectedRouter>
         }
       />
@@ -37,7 +35,7 @@ function Router() {
         path="/doctors/profile/me"
         element={
           <ProtectedRouter allowedRoles={["doctor"]}>
-            <Dashboard />
+            <DoctorDashboardPage />
           </ProtectedRouter>
         }
       />

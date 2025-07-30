@@ -1,122 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { BASE_URL, token, user } from "../../../config";
+import { user } from "../../../config";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
-// Reusable form components
-const FormInput = ({ className = "", ...props }) => (
-  <input
-    className={`w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer ${className}`}
-    {...props}
-  />
-);
+import FormInput from './profile/FormInput';
+import FormLabel from './profile/FormLabel';
+import FormGroup from './profile/FormGroup';
+import LabelAndInput from './profile/LabelAndInput';
+import SelectInput from './profile/SelectInput';
+import QualificationCard from './profile/QualificationCard';
+import ExperienceCard from './profile/ExperienceCard';
+import TimeSlotCard from './profile/TimeSlotCard';
+import DateInputGroup from './profile/DateInputGroup';
 
-const FormLabel = ({ children }) => (
-  <p className="text-[16px] font-semibold text-textColor mb-2">{children}</p>
-);
-
-const FormGroup = ({ label, children, className = "" }) => (
-  <div className={`mb-5 ${className}`}>
-    {label && <FormLabel>{label}</FormLabel>}
-    {children}
-  </div>
-);
-
-const LabelAndInput = ({ label, ...inputProps }) => (
-  <FormGroup label={label}>
-    <FormInput {...inputProps} />
-  </FormGroup>
-);
-
-const SelectInput = ({ label, options, className = "", ...props }) => (
-  <FormGroup label={label} className={className}>
-    <select
-      className="w-full px-4 py-3 border border-solid border-[#0066ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 rounded-md cursor-pointer"
-      {...props}
-    >
-      {options.map(({ value, label }) => (
-        <option key={value} value={value}>
-          {label}
-        </option>
-      ))}
-    </select>
-  </FormGroup>
-);
-
-const DateInputGroup = ({ prefix, formData, handleChange }) => (
-  <div className="grid grid-cols-2 gap-5">
-    <div>
-      <FormInput
-        type="text"
-        name={`${prefix}.university`}
-        placeholder="University/College"
-        className="mb-5"
-        value={formData[prefix].university}
-        onChange={handleChange}
-      />
-      <FormInput
-        type="date"
-        name={`${prefix}.startDate`}
-        value={formData[prefix].startDate}
-        onChange={handleChange}
-      />
-    </div>
-    <div>
-      <FormInput
-        type="text"
-        name={`${prefix}.degree`}
-        placeholder="Degree"
-        className="mb-5"
-        value={formData[prefix].degree}
-        onChange={handleChange}
-      />
-      <FormInput
-        type="date"
-        name={`${prefix}.endDate`}
-        value={formData[prefix].endDate}
-        onChange={handleChange}
-      />
-    </div>
-  </div>
-);
-
-const QualificationCard = ({ degree, university, startDate, endDate }) => (
-  <div className="bg-[#fff9ea] p-3 rounded-md mb-2">
-    <h3 className="text-[16px] font-semibold text-headingColor leading-6">
-      {degree} at {university}
-    </h3>
-    <p className="text-[14px] leading-6 text-textColor">
-      {new Date(startDate).getFullYear()} - {new Date(endDate).getFullYear()}
-    </p>
-  </div>
-);
-
-const ExperienceCard = ({ hospitalName, position, startDate, endDate }) => (
-  <div className="grid grid-cols-2 gap-5 mb-5 border border-solid border-[#0066ff61] p-4 rounded-md">
-    <div>
-      <p className="text-[16px] font-semibold text-textColor mb-2">Hospital: {hospitalName}</p>
-      <p className="text-[14px] text-textColor">From: {startDate}</p>
-    </div>
-    <div>
-      <p className="text-[16px] font-semibold text-textColor mb-2">Position: {position}</p>
-      <p className="text-[14px] text-textColor">To: {endDate}</p>
-    </div>
-  </div>
-);
-
-const TimeSlotCard = ({ day, startTime, endTime }) => (
-  <div className="flex items-center justify-between mb-2 bg-[#0066ff1a] p-2 rounded-md">
-    <div className="flex items-center gap-[10px]">
-      <p className="text-[15px] leading-6 text-textColor font-semibold capitalize">
-        {day}:
-      </p>
-      <p className="text-[15px] leading-6 text-textColor">
-        {startTime} - {endTime}
-      </p>
-    </div>
-  </div>
-);
+import { editDoctorProfile, getDoctorProfile } from "../../../apis/doctor";
 
 function Profile() {
   const initialFormState = {
@@ -133,7 +31,7 @@ function Profile() {
   };
 
   const [formData, setFormData] = useState(initialFormState);
-  const [timeSlot, setTimeSlot] = useState({ day: "" });
+  const [timeSlot, setTimeSlot] = useState({ day: "", startTime:"", endTime:"" });
   const [qualifications, setQualifications] = useState({
     university: "",
     degree: "",
@@ -150,17 +48,7 @@ function Profile() {
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (formData) => {
-      const res = await fetch(`${BASE_URL}/doctors/${user._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authentication: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      return res.json();
-    },
+    mutationFn: async (formData) => editDoctorProfile(user._id, formData),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["doctor"] });
       toast.success(data.message);
@@ -170,17 +58,13 @@ function Profile() {
     },
   });
 
-  const { data: doctorData, isError, error } = useQuery({
+  const {
+    data: doctorData,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["doctor"],
-    queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/doctors/profile/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authentication: `Bearer ${token}`,
-        },
-      });
-      return res.json();
-    },
+    queryFn: getDoctorProfile,
   });
 
   useEffect(() => {
@@ -209,7 +93,7 @@ function Profile() {
     e.preventDefault();
     if (e.target.name.includes(".")) {
       const [section, field] = e.target.name.split(".");
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [section]: {
           ...prev[section],
@@ -217,16 +101,16 @@ function Profile() {
         },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+      setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
   };
 
   const handleTimeSlot = (e) => {
-    setTimeSlot(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setTimeSlot((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const addQualifications = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       qualifications: [...prev.qualifications, qualifications],
     }));
@@ -239,7 +123,7 @@ function Profile() {
   };
 
   const addExperiences = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       experiences: [...prev.experiences, experiences],
     }));
@@ -252,7 +136,7 @@ function Profile() {
   };
 
   const addTimeSlot = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       timeSlots: [...prev.timeSlots, timeSlot],
     }));
@@ -273,7 +157,7 @@ function Profile() {
       value: formData.email,
       type: "email",
       placeholder: "Email",
-      name: "email", 
+      name: "email",
       label: "Email",
     },
     {
@@ -384,7 +268,7 @@ function Profile() {
                 className="mb-5"
                 value={qualifications.university}
                 onChange={(e) =>
-                  setQualifications(prev => ({
+                  setQualifications((prev) => ({
                     ...prev,
                     university: e.target.value,
                   }))
@@ -395,7 +279,7 @@ function Profile() {
                 name="startDate"
                 value={qualifications.startDate}
                 onChange={(e) =>
-                  setQualifications(prev => ({
+                  setQualifications((prev) => ({
                     ...prev,
                     startDate: e.target.value,
                   }))
@@ -410,7 +294,7 @@ function Profile() {
                 className="mb-5"
                 value={qualifications.degree}
                 onChange={(e) =>
-                  setQualifications(prev => ({
+                  setQualifications((prev) => ({
                     ...prev,
                     degree: e.target.value,
                   }))
@@ -421,14 +305,16 @@ function Profile() {
                 name="endDate"
                 value={qualifications.endDate}
                 onChange={(e) =>
-                  setQualifications(prev => ({
+                  setQualifications((prev) => ({
                     ...prev,
                     endDate: e.target.value,
                   }))
                 }
               />
             </div>
-            <button className="btn" onClick={addQualifications}>Add Qualification</button>
+            <button className="btn" onClick={addQualifications}>
+              Add Qualification
+            </button>
           </div>
         </FormGroup>
 
@@ -449,7 +335,7 @@ function Profile() {
                 className="mb-5"
                 value={experiences.hospitalName}
                 onChange={(e) =>
-                  setExperiences(prev => ({
+                  setExperiences((prev) => ({
                     ...prev,
                     hospitalName: e.target.value,
                   }))
@@ -460,7 +346,7 @@ function Profile() {
                 name="startDate"
                 value={experiences.startDate}
                 onChange={(e) =>
-                  setExperiences(prev => ({
+                  setExperiences((prev) => ({
                     ...prev,
                     startDate: e.target.value,
                   }))
@@ -475,7 +361,7 @@ function Profile() {
                 className="mb-5"
                 value={experiences.position}
                 onChange={(e) =>
-                  setExperiences(prev => ({
+                  setExperiences((prev) => ({
                     ...prev,
                     position: e.target.value,
                   }))
@@ -486,14 +372,16 @@ function Profile() {
                 name="endDate"
                 value={experiences.endDate}
                 onChange={(e) =>
-                  setExperiences(prev => ({
+                  setExperiences((prev) => ({
                     ...prev,
                     endDate: e.target.value,
                   }))
                 }
               />
             </div>
-            <button className="btn" onClick={addExperiences}>Add Experience</button>
+            <button className="btn" onClick={addExperiences}>
+              Add Experience
+            </button>
           </div>
         </FormGroup>
 

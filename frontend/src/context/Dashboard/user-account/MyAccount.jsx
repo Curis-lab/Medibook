@@ -3,16 +3,16 @@ import { useContext } from "react";
 import { authContext } from "../../AuthContext";
 import MyBookings from "./MyBookings";
 import Profile from "./Profile";
-import { BASE_URL } from "../../../config";
 import Loading from "../../../components/Loader/Loading";
 import Error from "../../../components/Error/Error";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import HashLoader from "react-spinners/HashLoader";
+import { deleteCurrentUserProfile, getCurrentUserProfile } from "../../../apis/patient";
 
 
 function MyAccount() {
-  const { dispatch, token, user } = useContext(authContext);
+  const { dispatch, user } = useContext(authContext);
   const [tab, setTab] = useState("bookings");
   const {
     data: userData,
@@ -21,21 +21,10 @@ function MyAccount() {
     isSuccess,
   } = useQuery({
     queryKey: ["profile", user._id],
-    queryFn: () =>
-      fetch(`${BASE_URL}/user/profile/me`,{
-        method: 'GET',
-        headers:{
-          Authentication: `Bearer ${token}`
-        }
-      }).then((res) => res.json()),
+    queryFn: ()=>getCurrentUserProfile(),
   });
   const { mutate: handleDeleteAccount, isPending } = useMutation({
-    mutationFn: fetch(`${BASE_URL}/user/${user._id}`, {
-      method: "DELETE",
-      headers: {
-        Authentication: `Bearer ${token}`,
-      },
-    }).then((res) => res),
+    mutationFn: deleteCurrentUserProfile(user._id),
     onSuccess: (res) => {
       if (res.ok) {
         dispatch({ type: "LOGOUT" });

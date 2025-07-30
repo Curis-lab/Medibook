@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { BiMenu } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../../../context/AuthContext";
-import { BASE_URL } from "../../../config";
+import { deleteDoctorAccount } from "../../../apis/doctor";
 
 function Tabs({ tab, setTab }) {
-  const { dispatch, user, token } = useContext(authContext);
+  const { dispatch, user} = useContext(authContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -13,12 +13,7 @@ function Tabs({ tab, setTab }) {
     navigate("/");
   };
   const handleDeleteAccount = async () => {
-    const res = await fetch(`${BASE_URL}/doctors/${user._id}`, {
-      method: "DELETE",
-      headers: {
-        Authentication: `Bearer ${token}`,
-      },
-    });
+    const res = await deleteDoctorAccount(user._id);
 
     if (res.ok) {
       dispatch({ type: "LOGOUT" });
