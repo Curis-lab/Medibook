@@ -22,8 +22,16 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email":"tun@gmail.com",
-    "password":"tun"
+    "email":"tuntun@gmail.com",
+    "password":"tuntun"
+}
+### Production authentication
+POST https://medibook-g32h.onrender.com/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email":"kaung@gmail.com",
+    "password":"kaung"
 }
 
 

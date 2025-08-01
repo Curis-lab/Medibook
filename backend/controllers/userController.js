@@ -3,6 +3,8 @@ import User from "../models/UserSchema.js";
 import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
 import { MixPatientRepository } from "../src/adapters/common/repositories/patient.rep.js";
 import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
+import { deleteImageKitImage } from "../src/infrastructure/plugins/imagekit/delete-file-imagekit.js";
+
 const generatePatientGateway = MixUnitOfWorkService(
   MixPatientRepository(MixDoctorRepository(class {}))
 );
@@ -35,10 +37,18 @@ export const updateUser = async (req, res) => {
   }
 };
 
+
 export const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
-    await patientGateway.deleteDoctorById(id);
+    const user = await patientGateway.findPatientById(id);
+
+    if (user.photo) {
+      await deleteImageKitImage(user.photo);
+    }
+
+    await patientGateway.deletePatientById(id);
+
     res.status(200).json({
       success: true,
       message: "Successfully deleted.",

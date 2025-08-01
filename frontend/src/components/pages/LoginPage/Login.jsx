@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import React, { useState, useContext } from "react";
 import HashLoader from "react-spinners/HashLoader";
 import { Link, useNavigate } from "react-router-dom";
-import {authContext} from '../../../context/AuthContext';
+import { authContext } from "../../../context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../../../apis/auth";
 
@@ -15,22 +15,37 @@ function Login() {
   });
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: async(formData)=>await login(formData),
+    mutationFn: async (formData) => await login(formData),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["doctor","profile"] });
-      dispatch({
-        type: "LOGIN_SUCCESS",
-        payload: {
-          user: result.data,
-          token: result.token,
-          role: result.role,
-        },
-      });
-      console.log('result',result);
-      toast.success(result.message);
-      navigate("/home");
+      queryClient.invalidateQueries({ queryKey: ["doctor", "profile"] });
+
+      console.log('this is on success',result);
+      if (result.status === false) {
+        dispatch({
+          type: "LOGIN_START",
+        });
+        setFormData({
+          email: "",
+          password: "",
+        });
+        toast.error(result.message);
+      } else {
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: {
+            user: result.data,
+            token: result.token,
+            role: result.role,
+          },
+        });
+        toast.success(result.message);
+        navigate("/home");
+      }
     },
     onError: (error) => {
+      dispatch({
+        type: "LOGIN_START",
+      });
       toast.error(error.message);
     },
   });

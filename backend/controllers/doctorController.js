@@ -1,13 +1,9 @@
-import { MixBookingRepository } from "../src/adapters/common/repositories/book.rep.js";
-import { MixDoctorRepository } from "../src/adapters/common/repositories/doctor.rep.js";
-import { MixPatientRepository } from "../src/adapters/common/repositories/patient.rep.js";
-import MixUnitOfWorkService from "../src/adapters/common/services/MixUnitOfWorkServices.js";
 import missingField from "../utils/checkField.js";
 import Booking from "../models/BookingSchema.js";
+import { deleteImageKitImage } from "../src/infrastructure/plugins/imagekit/delete-file-imagekit.js";
+import generateDoctorGateway from "../src/use-cases/generate-doctor/generate-doctor.gateway.js";
 
-const generateDoctorGateway = MixUnitOfWorkService(
-  MixBookingRepository(MixDoctorRepository(MixPatientRepository(class {})))
-);
+
 const doctorGateway = new generateDoctorGateway();
 
 export const updateDoctor = async (req, res) => {
@@ -55,6 +51,11 @@ export const updateDoctor = async (req, res) => {
 export const deleteDoctor = async (req, res) => {
   const id = req.params.id;
   try {
+    const doctor = await doctorGateway.getDoctorById(id);
+    if (doctor.photo) {
+      await deleteImageKitImage(doctor.photo);
+    }
+
     await doctorGateway.deleteDoctorById(id);
     res.status(200).json({
       success: true,

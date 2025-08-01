@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useRef,  useContext } from "react";
 import logo from "../../assets/images/logo.svg";
 import { Link, NavLink } from "react-router-dom";
 import { BiMenu } from "react-icons/bi";
@@ -12,25 +12,8 @@ const navLinks = [
 ];
 
 function Header() {
-  const headerRef = useRef(null);
   const menuRef = useRef(null);
   const { user, role, token } = useContext(authContext);
-  const handleStickyHeader = () => {
-    window.addEventListener("scroll", () => {
-      if (
-        document.body.scrollTop > 80 ||
-        document.documentElement.scrollTop > 80
-      ) {
-        headerRef.current.classList.add("sticky__header");
-      } else {
-        headerRef.current.classList.remove("sticky__header");
-      }
-    });
-  };
-  useEffect(() => {
-    handleStickyHeader();
-    return () => window.removeEventListener("scroll", handleStickyHeader);
-  }, []);
 
   const toggleMenu = () => {
     menuRef.current.classList.toggle("show__menu");
@@ -38,7 +21,6 @@ function Header() {
   return (
     <header
       className="leading-[100px] z-100 w-full fixed top-0"
-      // ref={headerRef}
     >
       <div className="mx-[20px]">
         <div

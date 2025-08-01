@@ -23,14 +23,14 @@ export const deleteDoctorAccount = async (id) =>
   await fetch(`${BASE_URL}/doctors/${id}`, {
     method: "DELETE",
     headers: {
-      Authentication: `Bearer ${token}`,
+      Authentication: `Bearer ${localStorage.getItem('token')}`,
     },
   });
 export const getDoctorProfile = () =>
   fetch(`${BASE_URL}/doctors/profile/me`, {
     headers: {
       "Content-Type": "application/json",
-      Authentication: `Bearer ${token}`,
+      Authentication: `Bearer ${localStorage.getItem('token')}`,
     },
   }).then((res) => res.json());
 
@@ -47,6 +47,6 @@ export const getDoctorProfileAppointment = () =>
   fetch(`${BASE_URL}/doctors/appointments-list/me`, {
     headers: {
       "Content-Type": "application/json",
-      Authentication: `Bearer ${token}`,
+      Authentication: `Bearer ${localStorage.getItem('token')}`,
     },
   }).then((res) => res.json());

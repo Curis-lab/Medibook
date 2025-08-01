@@ -24,7 +24,7 @@ function MyAccount() {
     queryFn: ()=>getCurrentUserProfile(),
   });
   const { mutate: handleDeleteAccount, isPending } = useMutation({
-    mutationFn: deleteCurrentUserProfile(user._id),
+    mutationFn: ()=>deleteCurrentUserProfile(user._id),
     onSuccess: (res) => {
       if (res.ok) {
         dispatch({ type: "LOGOUT" });
