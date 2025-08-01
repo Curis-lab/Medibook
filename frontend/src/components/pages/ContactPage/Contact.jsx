@@ -1,7 +1,7 @@
 function Contact() {
     return (
       <section className="min-h-screen">
-        <div className="px-4 mx-auto max-w-screen-md mt-[130px]">
+        <div className="px-4 mx-auto max-w-screen-md mt-[100px]">
           <h2 className="text-center">Contact Us</h2>
           <p className="mb-8 lg:mb-16 font-light text-center text__parag">
             Got a technical issue? Want to send feedback about a beta feature? Let

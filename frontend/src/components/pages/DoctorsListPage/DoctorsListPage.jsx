@@ -30,7 +30,7 @@ function Doctors() {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-[#fff9ea] py-[20px] mt-[130px]">
+      <section className="bg-[#fff9ea] py-[20px]">
         <div className="container text-center">
           <h2 className="heading">Find a doctor</h2>
           <form

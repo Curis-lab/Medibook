@@ -21,7 +21,6 @@ function Dashboard() {
     queryFn: () => getDoctorProfile(),
   });
   const [tab, setTab] = useState("overview");
-  console.log(doctorProfile)
   return (
     <section>
       <div className="max-w-[1170px] px-5 mx-auto">

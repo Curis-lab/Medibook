@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
-
+import morgan from "morgan";
 import dotenv from "dotenv";
 
 import BaseRouter from "./routes/index.js";
@@ -29,6 +29,8 @@ export function startHTTPServer() {
     allowedHeaders: ["Content-Type", "Authorization", "authentication"],
     credentials: true,
   };
+
+  app.use(morgan("dev"));
 
   app.use(express.json());
   app.use(cookieParser());

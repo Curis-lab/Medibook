@@ -20,7 +20,7 @@ function Header() {
   };
   return (
     <header
-      className="leading-[100px] z-100 w-full fixed top-0"
+      className="leading-[100px] z-10 w-full top-[20px] sticky"
     >
       <div className="mx-[20px]">
         <div

@@ -1,8 +1,10 @@
 import { BASE_URL, token } from "../config";
 
+const controller = new AbortController();
 
-export const getAlldoctors = () =>
-  fetch(`${BASE_URL}/doctors`).then((res) => res.json());
+export const getAlldoctors = () =>{ const result = fetch(`${BASE_URL}/doctors`,{signal: controller.signal}).then((res) => res.json())
+controller.abort();
+return result;};
 
 export const getDoctorDetails = (id) =>
   fetch(`${BASE_URL}/doctors/${id}`).then((res) => res.json());
@@ -23,14 +25,14 @@ export const deleteDoctorAccount = async (id) =>
   await fetch(`${BASE_URL}/doctors/${id}`, {
     method: "DELETE",
     headers: {
-      Authentication: `Bearer ${localStorage.getItem('token')}`,
+      Authentication: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 export const getDoctorProfile = () =>
   fetch(`${BASE_URL}/doctors/profile/me`, {
     headers: {
       "Content-Type": "application/json",
-      Authentication: `Bearer ${localStorage.getItem('token')}`,
+      Authentication: `Bearer ${localStorage.getItem("token")}`,
     },
   }).then((res) => res.json());
 
@@ -47,6 +49,6 @@ export const getDoctorProfileAppointment = () =>
   fetch(`${BASE_URL}/doctors/appointments-list/me`, {
     headers: {
       "Content-Type": "application/json",
-      Authentication: `Bearer ${localStorage.getItem('token')}`,
+      Authentication: `Bearer ${localStorage.getItem("token")}`,
     },
   }).then((res) => res.json());

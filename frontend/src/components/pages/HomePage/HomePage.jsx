@@ -7,7 +7,7 @@ function Home() {
   return (
     <>
       {/** =========== hero section ============ */}
-      <section className="relative 2xl:h-[800px] min-h-screen container lg:mt-[200px]">
+      <section className="relative 2xl:h-[800px] min-h-screen container lg:mt-[100px]">
         <div className="flex flex-col lg:flex-row gap-[90px] items-center justify-between">
           <div>
             <div className="lg:w-[570px]">

@@ -2,26 +2,18 @@ import React, { useContext } from "react";
 import { BiMenu } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../../../context/AuthContext";
-import { deleteDoctorAccount } from "../../../apis/doctor";
+import useAccountDeletionModal from "../../../hooks/Modals/useAccountDeletionModal";
 
 function Tabs({ tab, setTab }) {
-  const { dispatch, user} = useContext(authContext);
+  const { dispatch } = useContext(authContext);
   const navigate = useNavigate();
+  const accountDeletionModal = useAccountDeletionModal();
 
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/");
   };
-  const handleDeleteAccount = async () => {
-    const res = await deleteDoctorAccount(user._id);
-
-    if (res.ok) {
-      dispatch({ type: "LOGOUT" });
-      navigate("/");
-    } else {
-      console.log("Error deleting account");
-    }
-  };
+  
   return (
     <div>
       <span>
@@ -77,7 +69,7 @@ function Tabs({ tab, setTab }) {
           Logout
         </button>
         <button
-          onClick={handleDeleteAccount}
+          onClick={() => accountDeletionModal.onOpen()}
           className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
         >
           Delete Account

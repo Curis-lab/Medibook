@@ -1,19 +1,20 @@
-import { toast } from "react-toastify";
 import React, { useState, useContext } from "react";
 import HashLoader from "react-spinners/HashLoader";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { authContext } from "../../../context/AuthContext";
 import MyBookings from "../../../context/Dashboard/user-account/MyBookings";
 import Profile from "../../../context/Dashboard/user-account/Profile";
 
-import Loading from '../../Loader/Loading';
+import Loading from "../../Loader/Loading";
 import Error from "../../Error/Error";
-import { deleteCurrentUserProfile, getCurrentUserProfile } from "../../../apis/patient";
+import { getCurrentUserProfile } from "../../../apis/patient";
+import useAccountDeletionModal from "../../../hooks/Modals/useAccountDeletionModal";
 
 function MyAccount() {
   const { dispatch, user } = useContext(authContext);
   const [tab, setTab] = useState("bookings");
+  const accountDeleteModal = useAccountDeletionModal();
   const {
     data: userData,
     error,
@@ -23,18 +24,6 @@ function MyAccount() {
     queryKey: ["profile", user._id],
     queryFn: getCurrentUserProfile,
   });
-  const { mutate: handleDeleteAccount, isPending } = useMutation({
-    mutationFn:()=>deleteCurrentUserProfile(user._id),
-    onSuccess: (res) => {
-      if (res.ok) {
-        dispatch({ type: "LOGOUT" });
-      }
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
-
   const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
   };
@@ -77,14 +66,10 @@ function MyAccount() {
                 Logout
               </button>
               <button
-                onClick={handleDeleteAccount}
+                onClick={() => accountDeleteModal.onOpen()}
                 className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
               >
-                {isPending ? (
-                  <HashLoader size={25} color="#0066ff61" />
-                ) : (
-                  " Delete Account"
-                )}
+                Delete Account
               </button>
             </div>
           </div>
