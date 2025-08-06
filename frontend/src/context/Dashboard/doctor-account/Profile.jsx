@@ -140,7 +140,7 @@ function Profile() {
       ...prev,
       timeSlots: [...prev.timeSlots, timeSlot],
     }));
-    setTimeSlot({ day: "" });
+    // setTimeSlot({ day: "monday" });
   };
 
   const formFields = [

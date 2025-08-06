@@ -2,9 +2,10 @@ import missingField from "../utils/checkField.js";
 import Booking from "../models/BookingSchema.js";
 import { deleteImageKitImage } from "../src/infrastructure/plugins/imagekit/delete-file-imagekit.js";
 import generateDoctorGateway from "../src/use-cases/generate-doctor/generate-doctor.gateway.js";
-
+import { redisClient } from "../http-server.js";
 
 const doctorGateway = new generateDoctorGateway();
+//give approval to doctor
 
 export const updateDoctor = async (req, res) => {
   const id = req.params.id;
@@ -19,6 +20,7 @@ export const updateDoctor = async (req, res) => {
       "timeSlots",
     ];
     const missed = missingField(requiredFields, req.body);
+
     if (missed.status) {
       res.status(400).json({
         success: false,
@@ -30,6 +32,25 @@ export const updateDoctor = async (req, res) => {
     // Filter out email from req.body to prevent duplicate key errors
     const { email, ...updateData } = req.body;
 
+
+    /**
+     * doctor approve logic
+     * 1. doctor profile should be complete
+     *    - name, email, phone, bio, specialization, qualifications
+     */
+
+    async function giveApprovalToDoctor(doctorId){
+      /**
+       * draw existing data by id
+       * and check existing info
+       * and give approval
+       */
+
+      const existingDoctor = await doctorGateway.getDoctorById(doctorId);
+      console.log(existingDoctor);
+      return true;
+    }
+    
     const updatedUser = await doctorGateway.updateDoctorById(id, updateData);
 
     if (updatedUser == null) {
@@ -92,14 +113,30 @@ async function doctors(search) {
     : await doctorGateway.getAllDoctors();
 }
 
-export const getAllDoctor = async (req, res) => {
+export const getAllDoctors = async (req, res) => {
   try {
     const { search } = req.query;
-    const docts = await doctors(search);
+
+    let doctors_info;
+
+    if (redisClient.isReady) {
+      const result = await redisClient.get("doctors");
+      doctors_info = JSON.parse(result);
+    }
+    if (doctors_info) {
+      console.log("Cache hit");
+    } else {
+      console.log("chache miss");
+      doctors_info = await doctors(search);
+
+      if (redisClient.isReady) {
+        redisClient.setEx("doctors", 10, JSON.stringify(doctors_info));
+      }
+    }
     res.status(200).json({
       success: true,
       message: "Doctors found.",
-      data: docts,
+      data: doctors_info,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: "Users did not exist." });

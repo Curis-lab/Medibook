@@ -96,7 +96,7 @@ function Signup() {
 
   return (
     <section>
-      <div className="px-5 xl:px-0 lg:mt-[140px]">
+      <div className="px-5 xl:px-0 lg:mt-[10px]">
         <div className="max-w-[1170px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="hidden lg:block bg-primary rounded-l-[20px]">

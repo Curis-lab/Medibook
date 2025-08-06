@@ -2,6 +2,15 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-color: hsla(0, 0%, 100%, 0.981);
+  --paper-color: #a0a1a133;
+}
+
+body {
+  background-color: var(--bg-color);
+}
+
 .sticky__header {
   width: 100%;
   height: 100%;
