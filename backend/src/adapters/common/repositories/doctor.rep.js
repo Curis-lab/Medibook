@@ -38,10 +38,12 @@ export function MixDoctorRepository(Gateway) {
     async deleteDoctorById(id) {
       return await Doctor.findByIdAndDelete(id);
     }
-    async getDoctorsByIds(doctorIds){
-      return Doctor.find({ _id: { $in: doctorIds } }).select(
-        "-password"
-      );
+    async getDoctorsByIds(doctorIds) {
+      return Doctor.find({ _id: { $in: doctorIds } }).select("-password");
+    }
+    async giveDoctorApproval(id) {
+      //check if already approve and make it file
+      return await Doctor.findByIdAndUpdate(id, { $set: {isApproved: "approved"} });
     }
   };
 }

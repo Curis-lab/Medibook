@@ -36,7 +36,8 @@ function DoctorCard({
               +{totalPatients} patients
             </h3>
             <p className="text-[14px] leading-6 font-serif">
-              At {experiences[0].hospitalName}
+              {/* At {experiences[0].hospitalName} */}
+              
             </p>
           </div>
           <Link

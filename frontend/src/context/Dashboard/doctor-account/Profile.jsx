@@ -32,12 +32,14 @@ function Profile() {
 
   const [formData, setFormData] = useState(initialFormState);
   const [timeSlot, setTimeSlot] = useState({ day: "", startTime:"", endTime:"" });
+  
   const [qualifications, setQualifications] = useState({
     university: "",
     degree: "",
     startDate: "",
     endDate: "",
   });
+
   const [experiences, setExperiences] = useState({
     hospitalName: "",
     position: "",

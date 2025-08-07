@@ -22,16 +22,17 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email":"tuntun@gmail.com",
-    "password":"tuntun"
+    "email":"jhon@gmail.com",
+    "password":"jhon"
 }
+
 ### Production authentication
 POST https://medibook-g32h.onrender.com/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email":"kaung@gmail.com",
-    "password":"kaung"
+    "email":"h@gmail.com",
+    "password":"h"
 }
 
 
@@ -79,39 +80,20 @@ DELETE  http://localhost:8000/api/v1/doctors/6869e5c3bf6e32b573f28bb3
 Content-Type: application/json
 Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjllNWMzYmY2ZTMyYjU3M2YyOGJiMyIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTIyNzk1MDUsImV4cCI6MTc1MzU3NTUwNX0.k_-e_1XUbMzhUrxslNA3Qvxfnsccc1biRYjANHer-Po
 
+
 ### update doctor to get approved (used)
-PUT http://localhost:8000/api/v1/doctors/685601d9a7206c468dd3d3f5
+PUT http://localhost:8000/api/v1/doctors/6882f70d36368655d8c2ee0f
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYwMWQ5YTcyMDZjNDY4ZGQzZDNmNSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTA4NjA1MjIsImV4cCI6MTc1MjE1NjUyMn0.Caqg4T7IxCpPpsvbVXcWILyGbgThfNPUzVabtoM6Gmc
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODJmNzBkMzYzNjg2NTVkOGMyZWUwZiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTQ1NDA2NjYsImV4cCI6MTc1NTgzNjY2Nn0.tNerrOx87mKblJNjympwEdkHWIvL5Ed0ukIHgRTI9a4
 
 {
-    "name":"tun tun",
-    "email":"tun@gmail.com",
-    "phone":"02993988",
-    "bio":"I am a good doctor",
-    "specialization":"cardiologist",
-    "ticketPrice":100,
-    "qualifications":[
+    "specialization": "cardiologist",
+    "qualifications": [
         {
-            "degree":"MBBS",
-            "university":"Yangon University",
-            "startDate":"2020-01-01",
-            "endDate":"2024-01-01"
-        }
-    ],
-    "experiences":[
-        {
-            "position": "Senior Cardiologist",
-            "hospitalName": "Yangon General Hospital",
+            "degree": "MBBS", 
+            "university": "Yangon University",
             "startDate": "2020-01-01",
             "endDate": "2024-01-01"
-        }
-    ],
-    "timeSlots":[
-        {
-            "day": "Monday",
-            "startingTime": "10:00",
-            "endingTime": "16:00"
         }
     ]
 }

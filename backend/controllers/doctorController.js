@@ -3,34 +3,26 @@ import Booking from "../models/BookingSchema.js";
 import { deleteImageKitImage } from "../src/infrastructure/plugins/imagekit/delete-file-imagekit.js";
 import generateDoctorGateway from "../src/use-cases/generate-doctor/generate-doctor.gateway.js";
 
-
 const doctorGateway = new generateDoctorGateway();
 
 export const updateDoctor = async (req, res) => {
-  const id = req.params.id;
-  try {
-    const requiredFields = [
-      "phone",
-      "bio",
-      "specialization",
-      "ticketPrice",
-      "qualifications",
-      "experiences",
-      "timeSlots",
-    ];
-    const missed = missingField(requiredFields, req.body);
-    if (missed.status) {
-      res.status(400).json({
-        success: false,
-        message: missed.message,
-      });
-      return;
-    }
 
-    // Filter out email from req.body to prevent duplicate key errors
+  const id = req.params.id;
+
+  try {
+    /** 
+     * require 
+     * 1. specializations
+     * 2. qualifications
+     */
+    
     const { email, ...updateData } = req.body;
 
     const updatedUser = await doctorGateway.updateDoctorById(id, updateData);
+    
+    if(updatedUser.data.specialization && updatedUser.data.qualifications){
+      await doctorGateway.giveDcotorApproval(id)
+    }
 
     if (updatedUser == null) {
       res.status(500).json({ success: false, message: "Failed to update" });
