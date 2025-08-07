@@ -3,115 +3,96 @@ import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 import "react-day-picker/dist/style.css";
 import { CiCloudSun } from "react-icons/ci";
+import FormInput from "../profile/FormInput";
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {editDoctorProfile} from '../../../../apis/doctor';
+import {toast} from 'react-toastify';
+
 function SelectTimeSlot() {
+  const queryClient = useQueryClient();
+  const {mutate: updateSlot} = useMutation({
+    mutationFn: async(data)=> await editDoctorProfile({
+      "timeSlots":data
+    }),
+    onSuccess: (res)=>{
+      queryClient.invalidateQueries({queryKey: ['doctor']});
+      if(res.ok){
+        toast.success('Upload time slot successfully')
+      }
+    }
+  })
+
   const [selected, setSelected] = useState();
+  const [slotForm, setSlotForm] = useState({
+    day:'',
+    startTime: "",
+    endTime: "",
+  });
 
   let footer = <p>Please pick a day.</p>;
   if (selected) {
     footer = <p>You picked {format(selected, "PP")}.</p>;
   }
+
+  const handleSubmitTimeSlot = () => {
+    if (!selected || !slotForm.startTime || !slotForm.endTime) {
+      toast.error('Please fill all fields');
+      return;
+    }
+    updateSlot(slotForm);
+  };
+
   return (
     <div className="flex gap-2">
       <div>
         <DayPicker
           mode="single"
           selected={selected}
-          onSelect={setSelected}
+          onSelect={(day) => {
+            setSlotForm((prev) => ({
+              ...prev,
+              day: day,
+            }));
+            setSelected(day);
+          }}
           footer={footer}
           className="shadow-lg bg-paper p-[10px] rounded-lg"
         />
       </div>
-      <div className="p-2 flex flex-col gap-[30px] bg-paper rounded-lg shadow-lg">
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between w-[700px] items-center">
-            <div className="flex">
-              <CiCloudSun className="text-2xl" />
-              <div>
-                <h1>Morning</h1>
-                <p>9:00 AM to 12:00 PM</p>
-              </div>
-            </div>
-            <div>+ Add Slots</div>
-          </div>
-          <div>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {[
-                "9:00 AM",
-                "9:10 AM",
-                "9:20 AM",
-                "9:30 AM",
-                "9:40 AM",
-                "9:50 AM",
-                "10:00 AM",
-                "10:10 AM",
-                "10:20 AM",
-                "10:30 AM",
-              ].map((time, index) => (
-                <button
-                  key={index}
-                  key={time}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md ${
-                    time === "10:10 AM"
-                      ? "bg-blue-500 text-white"
-                      : "border border-gray-300 hover:border-blue-500"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    className="form-radio"
-                    name="timeslot"
-                    defaultChecked={time === "10:10 AM"}
-                  />
-                  <span>{time}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+      <div>
+        <div className="flex gap-3">
+          <FormInput
+            type="time"
+            name="startTime"
+            value={slotForm.startTime}
+            onChange={(e) => {
+              setSlotForm((prev) => ({
+                ...prev,
+                [e.target.name]: e.target.value,
+              }));
+            }}
+          />
+
+          <FormInput
+            type="time"
+            name="endTime"
+            value={slotForm.endTime}
+            onChange={(e) => {
+              setSlotForm((prev) => ({
+                ...prev,
+                [e.target.name]: e.target.value,
+              }));
+            }}
+          />
+          <button
+            onClick={handleSubmitTimeSlot}
+            className="bg-blue-400 px-2 py-1 rounded-[4px] w-[250px]"
+          >
+            Add Slot
+          </button>
         </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between w-[700px] items-center">
-            <div className="flex">
-              <CiCloudSun className="text-2xl" />
-              <div>
-                <h1>Evening</h1>
-                <p>12:00 AM to 5:00 PM</p>
-              </div>
-            </div>
-            <div>+ Add Slots</div>
-          </div>
-          <div>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {[
-                "12:00 PM",
-                "12:30 PM",
-                "1:00 PM",
-                "1:30 PM",
-                "2:00 PM",
-                "2:30 PM",
-                "3:00 PM",
-                "3:30 PM",
-                "4:00 PM",
-                "4:30 PM",
-              ].map((time, index) => (
-                <button
-                  key={index}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md ${
-                    time === "10:10 AM"
-                      ? "bg-blue-500 text-white"
-                      : "border border-gray-300 hover:border-blue-500"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    className="form-radio"
-                    name="timeslot"
-                    defaultChecked={time === "10:10 AM"}
-                  />
-                  <span>{time}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+        <div>
+          History of Slot
         </div>
       </div>
     </div>
