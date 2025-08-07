@@ -10,6 +10,9 @@ import Loading from "../../Loader/Loading";
 import Error from "../../Error/Error";
 import { getCurrentUserProfile } from "../../../apis/patient";
 import useAccountDeletionModal from "../../../hooks/Modals/useAccountDeletionModal";
+import LogoutBtn from "../../atoms/Button/LogoutBtn/LogoutBtn";
+import AccountDeletionBtn from "../../atoms/Button/AccountDeletionBtn/AccountDeletionBtn";
+import PatientInfoTemplate from "../../templates/PatientInfo/PatientInfo";
 
 function MyAccount() {
   const { dispatch, user } = useContext(authContext);
@@ -29,48 +32,16 @@ function MyAccount() {
   };
 
   return (
-    <div className="max-w-[1170px] px-5 max-auto lg:mt-[150px]">
+    <div className="max-w-[1170px] px-5 max-auto lg:mt-[50px] container">
       {isLoading && <Loading />}
       {error && <Error errMessage={error} />}
       {isSuccess && (
         <div className="grid md:grid-cols-3 gap-10">
           <div className="pb-[50px] px-[30px] rounded-md">
-            <div className="flex items-center justify-center">
-              <figure className="w-[100px] h-[100px] rounded-full border-2 border-solid border-primary">
-                <img
-                  src={userData.data.photo}
-                  alt=""
-                  className="w-full h-full object-cover rounded-full"
-                />
-              </figure>
-            </div>
-            <div className="text-center mt-4">
-              <h3 className="text-[18px] leading-[30px] text-primary font-bold">
-                {userData.data.name}
-              </h3>
-              <p className="text-black text-[15px] leading-6 font-medium">
-                {userData.data.email}
-              </p>
-              <p className="text-black text-[15px] leading-6 font-medium">
-                Blood Type:{" "}
-                <span className="ml-2 text-primary text-[22px] leading-8">
-                  {userData.data.bloodType}
-                </span>
-              </p>
-            </div>
+            <PatientInfoTemplate {...userData.data}/>
             <div className="mt-[50px] md:mt-[100px]">
-              <button
-                onClick={handleLogout}
-                className="w-full bg-[#181a1e] p-3 text-[16px] leading-7 rounded-md text-white"
-              >
-                Logout
-              </button>
-              <button
-                onClick={() => accountDeleteModal.onOpen()}
-                className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
-              >
-                Delete Account
-              </button>
+              <LogoutBtn handleLogout={handleLogout}/>
+              <AccountDeletionBtn handleDeletion={()=>accountDeleteModal.onOpen()}/>
             </div>
           </div>
           <div className="md:col-span-2 md:px-[30px]">

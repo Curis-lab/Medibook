@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { user } from "../../../config";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
 
-import FormInput from './profile/FormInput';
-import FormLabel from './profile/FormLabel';
-import FormGroup from './profile/FormGroup';
-import LabelAndInput from './profile/LabelAndInput';
-import SelectInput from './profile/SelectInput';
-import QualificationCard from './profile/QualificationCard';
-import ExperienceCard from './profile/ExperienceCard';
-import TimeSlotCard from './profile/TimeSlotCard';
-import DateInputGroup from './profile/DateInputGroup';
+import FormInput from "./profile/FormInput";
+import FormLabel from "./profile/FormLabel";
+import FormGroup from "./profile/FormGroup";
+import LabelAndInput from "./profile/LabelAndInput";
+import SelectInput from "./profile/SelectInput";
+import QualificationCard from "./profile/QualificationCard";
+import ExperienceCard from "./profile/ExperienceCard";
+import TimeSlotCard from "./profile/TimeSlotCard";
+import DateInputGroup from "./profile/DateInputGroup";
 
 import { editDoctorProfile, getDoctorProfile } from "../../../apis/doctor";
 
@@ -31,8 +30,12 @@ function Profile() {
   };
 
   const [formData, setFormData] = useState(initialFormState);
-  const [timeSlot, setTimeSlot] = useState({ day: "", startTime:"", endTime:"" });
-  
+  const [timeSlot, setTimeSlot] = useState({
+    day: "",
+    startTime: "",
+    endTime: "",
+  });
+
   const [qualifications, setQualifications] = useState({
     university: "",
     degree: "",
@@ -50,12 +53,16 @@ function Profile() {
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (formData) => editDoctorProfile(user._id, formData),
+    mutationFn: async (formData) => {
+      const doctorInfo = await editDoctorProfile(formData);
+      return doctorInfo;
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["doctor"] });
       toast.success(data.message);
     },
     onError: (error) => {
+      console.log(error);
       toast.error(error.message);
     },
   });
@@ -142,7 +149,7 @@ function Profile() {
       ...prev,
       timeSlots: [...prev.timeSlots, timeSlot],
     }));
-    setTimeSlot({ day: "" });
+    // setTimeSlot({ day: "monday" });
   };
 
   const formFields = [

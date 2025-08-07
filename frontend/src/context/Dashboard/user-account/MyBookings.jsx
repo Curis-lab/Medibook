@@ -25,7 +25,7 @@ function MyBookings() {
         </h2>
       )}
       {isSuccess && myProfile?.data && myProfile.data.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 p-[20px]">
           {myProfile.data.map((doctor) => (
             <DoctorCard {...doctor} key={doctor._id} />
           ))}

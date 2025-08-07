@@ -19,7 +19,6 @@ function Login() {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["doctor", "profile"] });
 
-      console.log('this is on success',result);
       if (result.status === false) {
         dispatch({
           type: "LOGIN_START",
@@ -57,7 +56,7 @@ function Login() {
   };
 
   return (
-    <section className="px-5 lg:px-0 lg:mt-[200px]">
+    <section className="px-5 lg:px-0 bg-primary-background py-10 h-screen">
       <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md md:p-10">
         <h3 className="text-black text-[22px] leading-9 font-bold mb-10">
           Hello! <span className="text-primary">Weclome</span> Back 🎉

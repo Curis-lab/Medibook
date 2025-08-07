@@ -2,9 +2,12 @@
 
 @theme {
   --color-primary: #007bff;
+  --color-primary-background: var(--bg-color);
+  --color-paper: var(--paper-color);
 }
 
 @layer components {
+
   .container {
     @apply max-w-full mx-auto;
   }

@@ -7,8 +7,25 @@ import dotenv from "dotenv";
 
 import BaseRouter from "./routes/index.js";
 
+import redis from "redis";
+
 dotenv.config();
-const connectDB = async () => {
+
+
+export const redisClient = redis.createClient({
+  password: "KZWpOpLJANbj8S0kIphBqlrk4dWMnjSI",
+  socket: {
+    host: "redis-15385.c240.us-east-1-3.ec2.redns.redis-cloud.com",
+    port: 15385,
+  },
+});
+
+//display status of redis
+redisClient
+  .connect(console.log("Redis is connected"))
+  .catch(console.err);
+
+  const connectDB = async () => {
   mongoose.set("strictQuery", false);
 
   try {

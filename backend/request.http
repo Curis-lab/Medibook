@@ -22,8 +22,13 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
+<<<<<<< HEAD
     "email":"jhon@gmail.com",
     "password":"jhon"
+=======
+    "email":"tun@gmail.com",
+    "password":"tun"
+>>>>>>> main
 }
 
 ### Production authentication
@@ -130,15 +135,21 @@ Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMz
 
 
 ### appointment booking
-POST http://localhost:8000/api/v1/bookings/checkout-session/6860ec050dda14c957e6ed3f
+POST http://localhost:8000/api/v1/bookings/checkout-session/688e22e5f009deb6e70c5856
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTYxNGMzZWI2NDEyNWRmMDQ4YzMxYyIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzUyMDc0MDM5LCJleHAiOjE3NTMzNzAwMzl9.Ltz6XOJerlk4fw9-kVSWrcwDlK6EgPYo81i_bD151K8
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGM3ZDFjNzNhOTdiOWExOGJmZWQ5MiIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzU0MjcyMzkwLCJleHAiOjE3NTU1NjgzOTB9.n3GcW9IWGjOdFZX1Od_cXbrwjaP3pfNGh_IkZxOM8LM
+
+{
+    "appointmentDate": "2025-04-01"
+}
+
 
 
 ### doctor appointment (user)
 GET http://localhost:8000/api/v1/user/appointments/my-appointment
 Content-Type: application/json
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBlYzA1MGRkYTE0Yzk1N2U2ZWQzZiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3NTIwNzY3NDAsImV4cCI6MTc1MzM3Mjc0MH0.C3fLl_Gp2FnuCTC6aii5fC9Mg-5PyxHWpdJnUzRNjaM
+Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGM3ZDFjNzNhOTdiOWExOGJmZWQ5MiIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzU0MjcyMzkwLCJleHAiOjE3NTU1NjgzOTB9.n3GcW9IWGjOdFZX1Od_cXbrwjaP3pfNGh_IkZxOM8LM
+
 
 ### doctor profile (used)
 GET http://localhost:8000/api/v1/doctors/profile/me

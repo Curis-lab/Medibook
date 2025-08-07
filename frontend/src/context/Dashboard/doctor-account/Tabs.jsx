@@ -1,8 +1,38 @@
 import React, { useContext } from "react";
-import { BiMenu } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../../../context/AuthContext";
 import useAccountDeletionModal from "../../../hooks/Modals/useAccountDeletionModal";
+import LogoutBtn from "../../../components/atoms/Button/LogoutBtn/LogoutBtn";
+import AccountDeletionBtn from "../../../components/atoms/Button/AccountDeletionBtn/AccountDeletionBtn";
+import { 
+  BiMenu, 
+  BiHomeAlt,           // For Overview tab
+  BiCalendar,          // For Appointments tab  
+  BiUser,              // For Profile tab
+  BiTime               // For Time Slot Management tab
+} from "react-icons/bi";
+
+function TabBtn({ fn, tab, label, identity, icon: Icon }) {
+  const isActive = tab === identity;
+  const buttonClasses = `
+    w-full 
+    mt-0 
+    rounded-full 
+    flex 
+    items-center 
+    gap-2 
+    py-2 
+    px-5
+    ${isActive ? "bg-[#1e1b1b86] text-[#fff]" : "bg-transparent text-black"}
+  `;
+
+  return (
+    <button onClick={fn} className={buttonClasses}>
+      {Icon && <Icon className="text-lg" />}
+      {label}
+    </button>
+  );
+}
 
 function Tabs({ tab, setTab }) {
   const { dispatch } = useContext(authContext);
@@ -13,67 +43,32 @@ function Tabs({ tab, setTab }) {
     dispatch({ type: "LOGOUT" });
     navigate("/");
   };
+
   
   return (
-    <div>
-      <span>
-        <BiMenu className="w-6 h-6 cursor-pointer" />
-      </span>
-      <div className="hidden lg:flex flex-col p-[30px] bg-white shadow-md h-max rounded-md">
-        <button
-          onClick={() => setTab("overview")}
-          className={`${
-            tab === "overview"
-              ? "bg-indigo-100 text-primary"
-              : "bg-transparent text-black"
-          } w-full btn mt-0 rounded-md`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setTab("appointments")}
-          className={`${
-            tab === "appointments"
-              ? "bg-indigo-100 text-primary"
-              : "bg-transparent text-black"
-          } w-full btn mt-0 rounded-md`}
-        >
-          Appointments
-        </button>
-        <button
-          onClick={() => setTab("settings")}
-          className={`${
-            tab === "settings"
-              ? "bg-indigo-100 text-primary"
-              : "bg-transparent text-black"
-          } w-full btn mt-0 rounded-md`}
-        >
-          Profile
-        </button>
-        <button
-          onClick={() => setTab("timeslot")}
-          className={`${
-            tab === "timeslot"
-              ? "bg-indigo-100 text-primary"
-              : "bg-transparent text-black"
-          } w-full btn mt-0 rounded-md`}
-        >
-          Time Slot Management
-        </button>
+    <div className="flex flex-col h-screen">
+      <div className="hidden lg:flex flex-col p-[20px] bg-paper backdrop-blur-lg shadow-md h-max rounded-md gap-2">
+        {[
+          { id: 'overview', label: 'Overview', icon: BiHomeAlt },
+          { id: 'appointments', label: 'Appointments', icon: BiCalendar },
+          { id: 'settings', label: 'Profile', icon: BiUser },
+          { id: 'timeslot', label: 'Time Slot Management', icon: BiTime }
+        ].map(({ id, label, icon }) => (
+          <TabBtn
+            key={id}
+            fn={() => setTab(id)}
+            tab={tab}
+            label={label}
+            identity={id}
+            icon={icon}
+          />
+        ))}
       </div>
       <div className="mt-[100px] w-full">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-[#181a1e] p-3 text-[16px] leading-7 rounded-md text-white"
-        >
-          Logout
-        </button>
-        <button
-          onClick={() => accountDeletionModal.onOpen()}
-          className="w-full bg-red-600 p-3 text-[16px] leading-7 rounded-md mt-4 text-white"
-        >
-          Delete Account
-        </button>
+        <LogoutBtn handleLogout={handleLogout} />
+        <AccountDeletionBtn
+          handleDeletion={() => accountDeletionModal.onOpen}
+        />
       </div>
     </div>
   );

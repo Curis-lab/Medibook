@@ -1,20 +1,24 @@
-import { BASE_URL, token } from "../config";
+import { BASE_URL } from "../config";
 
 const controller = new AbortController();
 
-export const getAlldoctors = () =>{ const result = fetch(`${BASE_URL}/doctors`,{signal: controller.signal}).then((res) => res.json())
-controller.abort();
-return result;};
+export const getAlldoctors = () => {
+  const result = fetch(`${BASE_URL}/doctors`, {
+    signal: controller.signal,
+  }).then((res) => res.json());
+  controller.abort();
+  return result;
+};
 
 export const getDoctorDetails = (id) =>
   fetch(`${BASE_URL}/doctors/${id}`).then((res) => res.json());
 
-export const editDoctorProfile = async (id, formData) => {
-  const res = await fetch(`${BASE_URL}/doctors/${id}`, {
+export const editDoctorProfile = async (formData) => {
+  const res = await fetch(`${BASE_URL}/doctors`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authentication: `Bearer ${token}`,
+      Authentication: `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify(formData),
   });

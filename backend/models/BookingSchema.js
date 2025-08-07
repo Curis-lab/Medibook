@@ -29,6 +29,7 @@ const bookingSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 bookingSchema.pre("", function (next) {
   this.populat("user").populat({
     path: "doctor",
@@ -36,4 +37,5 @@ bookingSchema.pre("", function (next) {
   });
   next();
 });
+
 export default mongoose.model("Booking", bookingSchema);

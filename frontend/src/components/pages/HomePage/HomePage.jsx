@@ -7,8 +7,8 @@ function Home() {
   return (
     <>
       {/** =========== hero section ============ */}
-      <section className="relative 2xl:h-[800px] min-h-screen container lg:mt-[100px]">
-        <div className="flex flex-col lg:flex-row gap-[90px] items-center justify-between">
+      <section className="relative 2xl:h-[800px] p-2">
+        <div className="flex flex-col lg:flex-row gap-[90px] items-center justify-between bg-[#83b6e391] h-screen rounded-[20px] p-10">
           <div>
             <div className="lg:w-[570px]">
               <h1 className="text-[36px] leading-[46px] text-black font-[800] md:text-[60px] md:leading-[70px]">
