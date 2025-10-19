@@ -22,13 +22,8 @@ POST http://localhost:8000/api/v1/auth/login
 Content-Type: application/json
 
 {
-<<<<<<< HEAD
     "email":"jhon@gmail.com",
     "password":"jhon"
-=======
-    "email":"tun@gmail.com",
-    "password":"tun"
->>>>>>> main
 }
 
 ### Production authentication

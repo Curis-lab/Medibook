@@ -8,15 +8,16 @@ import dotenv from "dotenv";
 import BaseRouter from "./routes/index.js";
 
 import redis from "redis";
+import createScopeContainerMiddleware from "./src/infrastructure/web/middlewares/create-scope-container.middleware.js";
 
 dotenv.config();
 
 
 export const redisClient = redis.createClient({
-  password: "KZWpOpLJANbj8S0kIphBqlrk4dWMnjSI",
+  password: "NBSMd0Uy84Op49L4twaKGL1kTebC0sQv",
   socket: {
-    host: "redis-15385.c240.us-east-1-3.ec2.redns.redis-cloud.com",
-    port: 15385,
+    host: "redis-12674.c15.us-east-1-2.ec2.redns.redis-cloud.com",
+    port: 12674,
   },
 });
 
@@ -36,7 +37,7 @@ redisClient
   }
 };
 
-export function startHTTPServer() {
+export function startHTTPServer(container) {
   const app = express();
   const port = process.env.PORT || 8000;
 
@@ -47,7 +48,7 @@ export function startHTTPServer() {
     credentials: true,
   };
 
-  app.use(morgan("dev"));
+  // app.use(morgan("dev"));
 
   app.use(express.json());
   app.use(cookieParser());
@@ -61,6 +62,8 @@ export function startHTTPServer() {
     next();
   });
 
+  app.use(createScopeContainerMiddleware(container));
+  
   app.use("/api/v1", BaseRouter);
 
   app.use((err, req, res, next) => {
