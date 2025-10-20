@@ -1,5 +1,3 @@
-import React from "react";
-import { MdOutlineStarPurple500 } from "react-icons/md";
 import DoctorInfo from "../../organisms/DoctorInfo/DoctorInfo";
 import DoctorAvatar from "../../atoms/Avatars/DoctorAvatar/DoctorAvatar";
 

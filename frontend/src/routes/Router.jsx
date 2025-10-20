@@ -21,7 +21,7 @@ function Router() {
       <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegistrationPage />} />
-      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/support" element={<ContactPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route
         path="/users/profile/me"
