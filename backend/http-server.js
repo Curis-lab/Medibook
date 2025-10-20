@@ -12,10 +12,12 @@ import createScopeContainerMiddleware from "./src/infrastructure/web/middlewares
 
 dotenv.config();
 
+
+
 export const redisClient = redis.createClient({
-  password: process.env.REDIS_PASSWORD,
+  password: `${process.env.REDIS_PASSWORD}`,
   socket: {
-    host: process.env.REDIS_SOCKET_HOST,
+    host: `${process.env.REDIS_SOCKET_HOST}`,
     port: 12674,
   },
 });
