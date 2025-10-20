@@ -1,7 +1,5 @@
-import { BASE_URL } from "../config";
-
 export const getCurrentUserProfile = () =>
-  fetch(`${BASE_URL}/user/profile/me`, {
+  fetch(`${import.meta.env.VITE_BASE_URL}/user/profile/me`, {
     method: "GET",
     headers: {
       Authentication: `Bearer ${localStorage.getItem("token")}`,
@@ -9,7 +7,7 @@ export const getCurrentUserProfile = () =>
   }).then((res) => res.json());
 
 export const deleteCurrentUserProfile = (id) =>
-  fetch(`${BASE_URL}/user/${id}`, {
+  fetch(`${import.meta.env.VITE_BASE_URL}/user/${id}`, {
     method: "DELETE",
     headers: {
       Authentication: `Bearer ${localStorage.getItem("token")}`,
@@ -17,7 +15,7 @@ export const deleteCurrentUserProfile = (id) =>
   }).then((res) => res);
 
 export const editCurrentPatientProfile = (id, data) =>
-  fetch(`${BASE_URL}/user/${id}`, {
+  fetch(`${import.meta.VITE_BASE_URL}/user/${id}`, {
     method: "PUT",
     headers: {
       Authentication: `Bearer ${localStorage.getItem("token")}`,

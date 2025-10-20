@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import { toast } from "react-toastify";
-import {  user } from "../../../config";
 import handleFileUpload from "../../../hooks/useFileUploader";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { editCurrentPatientProfile, getCurrentUserProfile } from "../../../apis/patient";
-
-
+import {
+  editCurrentPatientProfile,
+  getCurrentUserProfile,
+} from "../../../apis/patient";
+import { user } from "../../../utils/user";
 
 function Profile() {
   const [previewURL, setPreviewURL] = useState(null);
@@ -16,10 +17,10 @@ function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     password: "",
-    photo: null, //url for of image
+    photo: null, 
     gender: "",
     bloodType: "",
-    role: "patient", // Set default value
+    role: "patient",
   });
 
   const {
@@ -32,7 +33,7 @@ function Profile() {
     queryFn: getCurrentUserProfile,
   });
   const { mutate: updateProfile } = useMutation({
-    mutationFn:(data)=> editCurrentPatientProfile(user._id, data),
+    mutationFn: (data) => editCurrentPatientProfile(user._id, data),
     onSuccess: (res) => {
       if (res.ok) {
         toast.success("Profile updated successfully!");
@@ -50,14 +51,14 @@ function Profile() {
     }
 
     try {
-      const { name, password, gender, role,bloodType } = formData;
+      const { name, password, gender, role, bloodType } = formData;
 
       const data = {
         name,
         password,
         gender,
         role,
-        bloodType
+        bloodType,
       };
 
       if (selectedImage) {

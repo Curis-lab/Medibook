@@ -1,7 +1,6 @@
-import { BASE_URL } from "../config";
 
 export const patientReviews = (id, reviewText, rating) => {
-  const res = fetch(`${BASE_URL}/doctors/${id}/reviews`, {
+  const res = fetch(`${import.meta.env.VITE_BASE_URL}/doctors/${id}/reviews`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

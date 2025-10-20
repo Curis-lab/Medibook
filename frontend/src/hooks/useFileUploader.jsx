@@ -7,14 +7,13 @@ import {
   ImageKitUploadNetworkError,
   upload,
 } from "@imagekit/react";
-import { BASE_URL } from "../config";
 
 export const uploadImg = async (file) => {
   const abortController = new AbortController();
 
   const authenticator = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/auth`);
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/auth`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(

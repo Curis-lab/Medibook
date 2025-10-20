@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { BASE_URL, token } from "../../config";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -30,11 +29,11 @@ function SidePanel() {
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/bookings/checkout-session/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/bookings/checkout-session/${id}`,
         {
           method: "POST",
           headers: {
-            Authentication: `Bearer ${token}`,
+            Authentication: `Bearer ${import.meta.env.VITE_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

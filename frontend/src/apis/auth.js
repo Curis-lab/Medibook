@@ -1,7 +1,6 @@
-import { BASE_URL } from "../config";
 
 export const login = async (formData) => {
-  const res = await fetch(`${BASE_URL}/auth/login`, {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,7 +12,7 @@ export const login = async (formData) => {
 };
 
 export const register = (formData) =>
-  fetch(`${BASE_URL}/auth/register`, {
+  fetch(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
     method: "POST",
     body: formData,
   }).then((res) => res.json());
