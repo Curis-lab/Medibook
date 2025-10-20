@@ -12,21 +12,17 @@ import createScopeContainerMiddleware from "./src/infrastructure/web/middlewares
 
 dotenv.config();
 
-
 export const redisClient = redis.createClient({
-  password: "NBSMd0Uy84Op49L4twaKGL1kTebC0sQv",
+  password: process.env.REDIS_PASSWORD,
   socket: {
-    host: "redis-12674.c15.us-east-1-2.ec2.redns.redis-cloud.com",
+    host: process.env.REDIS_SOCKET_HOST,
     port: 12674,
   },
 });
 
-//display status of redis
-redisClient
-  .connect(console.log("Redis is connected"))
-  .catch(console.err);
+redisClient.connect(console.log("Redis is connected")).catch(console.err);
 
-  const connectDB = async () => {
+const connectDB = async () => {
   mongoose.set("strictQuery", false);
 
   try {
@@ -63,7 +59,7 @@ export function startHTTPServer(container) {
   });
 
   app.use(createScopeContainerMiddleware(container));
-  
+
   app.use("/api/v1", BaseRouter);
 
   app.use((err, req, res, next) => {
@@ -75,6 +71,6 @@ export function startHTTPServer(container) {
   });
   app.listen(port, () => {
     connectDB();
-    console.log("Server is lived.");
+    console.log(`Server is lived on port ${port}`);
   });
 }
