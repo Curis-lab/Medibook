@@ -1,23 +1,14 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import DoctorCard from "../../Doctors/DoctorCard";
-import Error from "../../Error/Error";
-import Loading from "../../Loader/Loading";
-import { searchDoctorByQuery } from "../../../apis/doctor";
+import { useAllDoctors } from "../../../hooks/getter/useAllDoctors/useAllDoctors";
+import { RenderWithCondition } from "../../common/RenderWithCondition/RenderWithCondition";
 
 function Doctors() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const {
-    data: doctors,
-    error,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["doctors", debouncedQuery],
-    queryFn: async () => await searchDoctorByQuery(debouncedQuery),
-  });
+  const { doctors, error, isLoading } =
+    useAllDoctors(debouncedQuery);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,20 +46,22 @@ function Doctors() {
       </section>
       <section>
         <div className="container">
-          {isLoading && <Loading />}
-          {error && <Error errMessage={error.message || error.toString()} />}
-          {isSuccess && formatted(doctors).length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
-              {doctors.data.map((doctor) => (
-                <DoctorCard {...doctor} key={doctor._id} />
-              ))}
-            </div>
-          )}
-          {isSuccess && formatted(doctors).length === 0 && (
-            <div className="text-center mt-10 font-bold text-red-700">
-              No doctors found.
-            </div>
-          )}
+          {RenderWithCondition({
+            render: () =>
+              formatted(doctors).length === 0 ? (
+                <div className="text-center mt-10 font-bold text-red-700">
+                  No doctors found.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
+                  {doctors.data.map((doctor) => (
+                    <DoctorCard {...doctor} key={doctor._id} />
+                  ))}
+                </div>
+              ),
+            isLoading,
+            error,
+          })}
         </div>
       </section>
     </div>

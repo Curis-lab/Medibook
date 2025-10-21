@@ -1,10 +1,8 @@
 import { useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
 import HashLoader from "react-spinners/HashLoader";
-import { useNavigate } from "react-router-dom";
 import registerImage from "../../../assets/svg/register/register.svg";
-import defaultProfile from '../../../assets/images/default.jpg';
-import { register } from "../../../apis/auth";
+import defaultProfile from "../../../assets/images/default.jpg";
+import { useRegisterApi } from "../../../hooks/actions/useRegisterApi/useRegisterApi";
 
 function Signup() {
   const initialFormData = {
@@ -15,16 +13,12 @@ function Signup() {
     gender: "",
     role: "patient",
   };
-  const navigate = useNavigate();
   const [previewURL, setPreviewURL] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const fileInputRef = useRef(null);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (formData)=>register(formData),
-    onSuccess: () => navigate("/login"),
-  });
-  
+  const { mutate, isPending } = useRegisterApi();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -129,9 +123,7 @@ function Signup() {
                 <div className="mb-5 flex items-center gap-3">
                   <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primary flex items-center justify-center">
                     <img
-                      src={
-                        previewURL || defaultProfile
-                      }
+                      src={previewURL || defaultProfile}
                       alt=""
                       className="w-full h-full object-cover rounded-full"
                     />

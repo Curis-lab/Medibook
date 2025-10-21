@@ -1,0 +1,24 @@
+.TabsRoot {
+  display: flex;
+}
+
+.TabsList {
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  gap:6px;
+}
+
+.TabsTrigger {
+  text-align: start;
+  padding: 3px 5px;
+  border-radius: 10px;
+}
+.TabsTrigger:hover{
+  background-color: #4819e3;
+  color: #fff;
+}
+.TabsTrigger[data-state="active"] {
+	background: #df08d4;
+  color: #fff;
+}

@@ -1,53 +1,15 @@
-import { toast } from "react-toastify";
-import React, { useState, useContext } from "react";
+import { useState } from "react";
 import HashLoader from "react-spinners/HashLoader";
-import { Link, useNavigate } from "react-router-dom";
-import { authContext } from "../../../context/AuthContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login } from "../../../apis/auth";
+import { Link } from "react-router-dom";
+import { useAuthApi } from "../../../hooks/actions/useAuthApi/useAuthApi";
 
 function Login() {
-  const navigate = useNavigate();
-  const { dispatch } = useContext(authContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (formData) => await login(formData),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["doctor", "profile"] });
 
-      if (result.status === false) {
-        dispatch({
-          type: "LOGIN_START",
-        });
-        setFormData({
-          email: "",
-          password: "",
-        });
-        toast.error(result.message);
-      } else {
-        dispatch({
-          type: "LOGIN_SUCCESS",
-          payload: {
-            user: result.data,
-            token: result.token,
-            role: result.role,
-          },
-        });
-        toast.success(result.message);
-        navigate("/home");
-      }
-    },
-    onError: (error) => {
-      dispatch({
-        type: "LOGIN_START",
-      });
-      toast.error(error.message);
-    },
-  });
+  const { mutate, isPending } = useAuthApi();
 
   const handleInputChange = (e) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import handleFileUpload from "../../../hooks/useFileUploader";
@@ -8,6 +8,9 @@ import {
   getCurrentUserProfile,
 } from "../../../apis/patient";
 import { user } from "../../../utils/user";
+import { InputWithLabel } from "../../../components/atoms/InputWithLabel/InputWithLabel";
+import { RenderWithCondition } from "../../../components/common/RenderWithCondition/RenderWithCondition";
+
 
 function Profile() {
   const [previewURL, setPreviewURL] = useState(null);
@@ -17,7 +20,7 @@ function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     password: "",
-    photo: null, 
+    photo: null,
     gender: "",
     bloodType: "",
     role: "patient",
@@ -112,99 +115,131 @@ function Profile() {
     }
   }, [userProfile, error, isSuccess]);
 
-  return (
-    <div>
-      {isLoading && <div>...loading</div>}
-      {error && <div>...error</div>}
-      {isSuccess && (
-        <form action="" onSubmit={submitHandler}>
-          <input
-            className="w-full mb-5 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary cursor-pointer"
-            required
-            type="text"
-            placeholder="Name"
-            name="name"
-            value={formData.name || ""}
-            onChange={handleFormInputChange}
-          />
-          <input
-            className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary mb-5 cursor-pointer"
-            required
-            type="text"
-            placeholder="Blood Type"
-            name="bloodType"
-            value={formData.bloodType || ""}
-            onChange={handleFormInputChange}
-          />
-          <input
-            className="w-full mb-5 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary cursor-pointer"
-            required
-            type="password"
-            placeholder="********"
-            name="password"
-            value={formData.password || ""}
-            onChange={handleFormInputChange}
-          />
-          <div className="mb-5 flex items-center justify-between">
-            <label className="text-black font-bold text-[16px] leading-7">
-              Are you a:{" "}
-              <select
-                name="role"
-                value={formData.role || "patient"}
-                onChange={handleFormInputChange}
-                className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-              >
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-              </select>
-            </label>
-            <label className="text-black font-bold text-[16px] leading-7">
-              Gender:{" "}
-              <select
-                name="gender"
-                value={formData.gender || ""}
-                onChange={handleFormInputChange}
-                className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-              >
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+  const formInputTemplate = [
+    {
+      label: "Name",
+      htmlFor: "name",
+      id: "name",
+      defaultValue: formData.name || "",
+      onChange: handleFormInputChange,
+    },
+    {
+      label: "Blood Type",
+      htmlFor: "bloodType",
+      id: "bloodType",
+      defaultValue: formData.bloodType || "",
+      onChange: handleFormInputChange,
+    },
+    {
+      label: "Password",
+      htmlFor: "password",
+      id: "password",
+      defaultValue: formData.password || "",
+      onChange: handleFormInputChange,
+    },
+  ];
+
+  return RenderWithCondition({
+    render:()=>(<div>
+      <h1 className="text-xl font-bold">Your Profile</h1>
+      <form action="" onSubmit={submitHandler} className="flex flex-col gap-1">
+        {formInputTemplate.map((eachInput, idx) => (
+          <InputWithLabel {...eachInput} key={idx} />
+        ))}
+        {/* <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <input
+              className="w-full mb-5 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary cursor-pointer"
+              required
+              type="text"
+              placeholder="Name"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleFormInputChange}
+            />
+          </div> */}
+        {/* <input
+              className="w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary mb-5 cursor-pointer"
+              required
+              type="text"
+              placeholder="Blood Type"
+              name="bloodType"
+              value={formData.bloodType || ""}
+              onChange={handleFormInputChange}
+            /> */}
+        {/* <input
+              className="w-full mb-5 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primary text-[22px] leading-7 text-black placeholder:text-primary cursor-pointer"
+              required
+              type="password"
+              placeholder="********"
+              name="password"
+              value={formData.password || ""}
+              onChange={handleFormInputChange}
+            /> */}
+        <div className="mb-5 flex items-center justify-between">
+          <label className="text-black font-bold text-[16px] leading-7">
+            Are you a:{" "}
+            <select
+              name="role"
+              value={formData.role || "patient"}
+              onChange={handleFormInputChange}
+              className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
+            >
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </label>
+          <label className="text-black font-bold text-[16px] leading-7">
+            Gender:{" "}
+            <select
+              name="gender"
+              value={formData.gender || ""}
+              onChange={handleFormInputChange}
+              className="text-black font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
+            >
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+        </div>
+        <div className="mb-5 flex items-center gap-3">
+          <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primary flex items-center justify-center">
+            <img
+              src={previewURL || formData.photo || undefined}
+              alt=""
+              className="w-full h-full object-cover rounded-full"
+            />
+          </figure>
+          <div className="relative w-[130px] h-[50px]">
+            <input
+              type="file"
+              name="photo"
+              id="customFile"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept=".jpg, .png"
+              className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <label
+              htmlFor="customFile"
+              className="absolute top-0 left-0 w-full h-full flex items-center px-[0.75rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-black font-semibold rounded-lg truncate cursor-pointer"
+            >
+              Upload Photo
             </label>
           </div>
-          <div className="mb-5 flex items-center gap-3">
-            <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primary flex items-center justify-center">
-              <img
-                src={previewURL || formData.photo || undefined}
-                alt=""
-                className="w-full h-full object-cover rounded-full"
-              />
-            </figure>
-            <div className="relative w-[130px] h-[50px]">
-              <input
-                type="file"
-                name="photo"
-                id="customFile"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept=".jpg, .png"
-                className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-              />
-              <label
-                htmlFor="customFile"
-                className="absolute top-0 left-0 w-full h-full flex items-center px-[0.75rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-black font-semibold rounded-lg truncate cursor-pointer"
-              >
-                Upload Photo
-              </label>
-            </div>
-          </div>
-          <button type="submit" className="btn">
-            Update
-          </button>
-        </form>
-      )}
-    </div>
+        </div>
+        <button type="submit" className="btn">
+          Update
+        </button>
+      </form>
+    </div>),
+    error,
+    isLoading}
   );
 }
 

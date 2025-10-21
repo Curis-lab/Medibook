@@ -2,7 +2,7 @@ import RoundedAvatar from "../../atoms/Avatars/RoundedAvatar/RoundedAvatar";
 import PatientInfo from "../../organisms/PatientInfo/PatientInfo";
 function PatientInfoTemplate({ photo, name, email, bloodType }) {
   return (
-    <div className="flex items-center justify-center flex-col gap-2">
+    <div className="flex items-center justify-center flex-col gap-2 mb-[8px]">
       <RoundedAvatar photo={photo} />
       <PatientInfo {...{name, email, bloodType}}/>
     </div>

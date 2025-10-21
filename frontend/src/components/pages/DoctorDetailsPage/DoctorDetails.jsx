@@ -52,6 +52,7 @@ function DoctorDetails() {
                   Feedback
                 </button>
               </div>
+              {/* this is behave like a tab */}
               <div className="mt-10">
                 {tab === "about" ? (
                   <DoctorAbout {...doctorInfo.data} />
