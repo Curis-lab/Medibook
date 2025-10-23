@@ -132,6 +132,7 @@ function MyAccount() {
           </div>
         }
         TabsCat={TabsCat}
+        defaultValue={TabsCat[0].value}
       />
     </div>
   );

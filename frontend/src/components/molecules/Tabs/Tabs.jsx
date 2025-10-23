@@ -2,10 +2,10 @@ import * as React from "react";
 import { Tabs } from "radix-ui";
 import style from "./style.module.css";
 
-const TabTemplate = ({ profileComponent, dangerComponent, TabsCat }) => (
+const TabTemplate = ({ profileComponent, dangerComponent, TabsCat, defaultValue }) => (
   <Tabs.Root
     className={style.TabsRoot}
-    defaultValue="tab1"
+    defaultValue={defaultValue}
     orientation="vertical"
   >
     <Tabs.List className={style.TabsList} aria-label="Manage your account">
@@ -19,7 +19,7 @@ const TabTemplate = ({ profileComponent, dangerComponent, TabsCat }) => (
     </Tabs.List>
 
     {TabsCat.map((t, idx) => (
-      <Tabs.Content value={t.value} key={idx}>
+      <Tabs.Content className="mx-4" value={t.value} key={idx}>
         {t.component}
       </Tabs.Content>
     ))}

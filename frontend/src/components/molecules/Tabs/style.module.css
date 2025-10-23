@@ -7,6 +7,8 @@
   flex-direction: column;
   min-width: 250px;
   gap:6px;
+  padding-inline: 5px;
+  border-right: 1px solid #000;
 }
 
 .TabsTrigger {

@@ -32,7 +32,7 @@ function Doctors() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               type="search"
-              className="py-4 pl-4 pr-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-black"
+              className="placeholder:text-yellow-500 py-4 pl-4 pr-2 bg-transparent w-full focus:outline-none cursor-pointer"
               placeholder="Search Doctor's name or specialization"
             />
             <button
@@ -53,7 +53,7 @@ function Doctors() {
                   No doctors found.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
                   {doctors.data.map((doctor) => (
                     <DoctorCard {...doctor} key={doctor._id} />
                   ))}
